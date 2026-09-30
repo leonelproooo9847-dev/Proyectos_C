@@ -55,6 +55,8 @@
     #define Si_BIT7 (0b10000000)
 
 
+
+
     #define No_BIT0 (~(0b00000001))
     #define No_BIT1 (~(0b00000010))
     #define No_BIT2 (~(0b00000100))
@@ -130,7 +132,27 @@
     #define TECLA_F23           0x31
     #define TECLA_F24           0x32
 
+
     // Errores de funciones
+ 
+    /**
+     * @date: La firma de las definiciones de error están hechas de este modo:
+     *     CATEGORÍA | ERROR _ FATAL O NO | DATO ESPECIFICO DEL ERROR
+    
+     * CATEGORÍA        : puede ser desde una función a algo general.
+     * ERROR            : indica que es un error. Además si viene acompañado de
+     *                  la abreviación 'Win' o 'Lix' al inicio 'Error' quieren decir que
+     *                  son específico de ese entorno.
+     * FATAL O NO       : indica si es fatal o no, en los errores fatales
+     *                  no se indica mientras que en los no fatales se indica
+     *                  especeficiamente como 'NOFATAL'. Es decir, que la ausencia de
+     *                  'NOFATAL' en el nombre de la definición, quiere decir que ES fatal.
+     * DATO ESPECIFICO  : este apartado indica qué error describe la función en base con su
+     *                  Errno (Número de retorno)
+     */
+    //======================================================================
+    // generales
+    #define GENERAL_Error_Puntero_NULL                      0x01
     //======================================================================
     // funciones portables
     #define SacarDirectorioActual_Error_Punteros_NULLs      0x01
@@ -142,62 +164,29 @@
     #define CopiarBuffer_Error_Longitudes_Buffers_Cero              0x02
     #define CopiarBuffer_Error_Solapamiento_Buffers_Destino_Origen  0x03
     #define CopiarBuffer_Error_Solapamiento_Buffers_Origen_Destino  0x04
+    #define CopiarBuffer_Error_Mismos_Punteros_Origen_Destino        0x05
     //======================================================================
     // funciones de entornos de Windows y Linux
-    #define CapturarTeclaUTF8_Error_Puntero_NULL                0x01
-    #define CapturarTeclaUTF8_Error_Escritos_Cero               0x03
-    #define CapturarTeclaUTF8_Especifico_WinError_ReadConsole   0x02
-    #define CapturarTeclaUTF8_Especifico_WinError_LecturaDeParSup1   0x05
-    #define CapturarTeclaUTF8_Especifico_WinError_LecturaDeParSup2   0x06
-    #define CapturarTeclaUTF8_Especifico_WinError_LecturaDeParSup3   0x07
-
-    #define LimpiarConsola_Especifico_WinError_GetConsoleMode_Out    0x01
-    #define LimpiarConsola_Especifico_WinError_GetConsoleMode_Err    0x02
+    #define CapturarTeclaUTF8_Error_Puntero_NULL          0x01
+    #define CapturarTeclaUTF8_Error_Escritos_Cero         0x03
+    #define CapturarTeclaUTF8_WinError_ReadConsole        0x02
+    #define CapturarTeclaUTF8_WinError_LecturaDeParSup1   0x05
+    #define CapturarTeclaUTF8_WinError_LecturaDeParSup2   0x06
+    #define CapturarTeclaUTF8_WinError_LecturaDeParSup3   0x07
+ 
+    #define LimpiarConsola_WinErrorNOFATAL_stdOut_Sin_Consola         0x01
+    #define LimpiarConsola_WinErrorNOFATAL_stdErr_Sin_Consola         0x02
+    #define LimpiarConsola_WinError_GetConsoleScreemBufferInfo_stdOut 0x03
+    #define LimpiarConsola_WinError_GetConsoleScreemBufferInfo_stdErr 0x04
     // TODO: EXPANDIR DEFINICIONES DE ERRORES DE 'LimpiarConsola' Y DE LA MISMA FUNCIÓN
-
+ 
     #define Entrada_Error_PunteroEstructura_NULL        0x01
     #define Entrada_Error_Puntero_BufferEntrada_NULL    0x02
     #define Entrada_Error_Puntero_LongitudBuffer_Cero   0x03
     // TODO: EXPANDIR DEFINICIONES DE ERRORES DE 'Entrada' Y DE LA MISMA FUNCIÓN
-
+ 
     #define Escribir_Error Falso
-    
-    //======================================================================
-    
-    static Byte_t SacarDirectorioActual(
-        char*  __UBICACION_ACTUAL_DE_ESTE_ARCHIVO__entrada,
-        char*  __UBICACION_MODIFICADA__resultado,
-        size_t __LONGITUD_DEL_BUFFER_DE_RESULTADO__,
-        Bool_t __DEJAR_BARRA_INVERTIDA__
-    );
-    static Byte_t LimpiarBuffer(
-        Byte_t*     _ESTRUCTURA_,
-        size_t      _CANTIDAD_DE_BYTES_
-    );
-    Byte_t TipoReprDeSignos();
-    Byte_t CopiarBuffer(
-        void* BUFFER_ORIGEN,
-        void* BUFFER_DESTINO,
-        size_t LONGITUD_DEL_BUFFER_ORIGEN,
-        size_t LONGITUD_DEL_BUFFER_DESTINO
-    );
-    static Byte_t CapturarTeclaUTF8(
-        EVENTO_TECLA* INFORMACION_DE_LA_TECLA
-    );
-    static Byte_t LimpiarConsola(void);
-    static Byte_t Entrada(
-        ENTRADA_PARAMs* _CONFIGURACIONES_Y_PARAMETROS_
-    );
-    static Bool_t Escribir(
-        char*   _BUFFER_DE_TEXTO_C_,
-        size_t  _CANTIDAD_DE_BYTES_A_ESCRIBIR_,
-        size_t* _CANTIDAD_DE_BYTES_ESCRITOS_
-    );
-    static ssize_t Imprimir(
-        const char* _TEXTO_C_,
-        void* _PUNTERO_ARGUMENTO_O_NULL_
-    );
-       
+   
     //=========================================================================
 //--
 //
@@ -264,6 +253,66 @@
 //
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+// definiciones de funciones de esta API:
+     
+    static Byte_t SacarDirectorioActual(
+        char*  __UBICACION_ACTUAL_DE_ESTE_ARCHIVO__entrada,
+        char*  __UBICACION_MODIFICADA__resultado,
+        size_t __LONGITUD_DEL_BUFFER_DE_RESULTADO__,
+        Bool_t __DEJAR_BARRA_INVERTIDA__
+    );
+    //=========================================================================
+    static Byte_t LimpiarBuffer(
+        Byte_t*     _ESTRUCTURA_,
+        size_t      _CANTIDAD_DE_BYTES_
+    );
+    //=========================================================================
+    Byte_t TipoReprDeSignos();
+    //=========================================================================
+    Byte_t CopiarBuffer(
+        void* BUFFER_ORIGEN,
+        void* BUFFER_DESTINO,
+        size_t LONGITUD_DEL_BUFFER_ORIGEN,
+        size_t LONGITUD_DEL_BUFFER_DESTINO
+    );
+    //=========================================================================
+    static Byte_t CapturarTeclaUTF8(
+        EVENTO_TECLA* INFORMACION_DE_LA_TECLA
+    );
+    //=========================================================================
+    static Byte_t LimpiarConsola(void);
+    //=========================================================================
+    static Byte_t Entrada(
+        ENTRADA_PARAMs* _CONFIGURACIONES_Y_PARAMETROS_
+    );
+    //=========================================================================
+    static Bool_t Escribir(
+        char*   _BUFFER_DE_TEXTO_C_,
+        size_t  _CANTIDAD_DE_BYTES_A_ESCRIBIR_,
+        size_t* _CANTIDAD_DE_BYTES_ESCRITOS_
+    );
+    //=========================================================================
+    static ssize_t Imprimir(
+        const char* _TEXTO_C_,
+        void* _PUNTERO_ARGUMENTO_O_NULL_
+    );
+     
+//IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+//IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+//IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 // código compatible tanto para Windows como Linux:
    
     static Byte_t SacarDirectorioActual(
@@ -276,7 +325,7 @@
             __UBICACION_ACTUAL_DE_ESTE_ARCHIVO__entrada   == NULL ||
             __UBICACION_MODIFICADA__resultado             == NULL
         )
-            return 0x01;
+            return SacarDirectorioActual_Error_Punteros_NULLs;
    
         if (__DEJAR_BARRA_INVERTIDA__ == 0)
             __DEJAR_BARRA_INVERTIDA__ = No;
@@ -289,7 +338,7 @@
                 i_e++;
  
             if (i_e >= __LONGITUD_DEL_BUFFER_DE_RESULTADO__)
-                return 0x02;
+                return SacarDirectorioActual_Error_Longitud_Corta;
            
             while (__UBICACION_ACTUAL_DE_ESTE_ARCHIVO__entrada[i_r] != 0x00) {
                 __UBICACION_MODIFICADA__resultado[i_r] = __UBICACION_ACTUAL_DE_ESTE_ARCHIVO__entrada[i_r];
@@ -323,7 +372,7 @@
         size_t      _CANTIDAD_DE_BYTES_
     ) {
         if (_ESTRUCTURA_ == NULL)
-            return 0x01;
+            return GENERAL_Error_Puntero_NULL;
        
         size_t i = 0;
         while (i < _CANTIDAD_DE_BYTES_) {
@@ -339,7 +388,7 @@
     /*----------------------------------------------------------------------------*/
      
      
-    Byte_t TipoReprDeSignos() {
+    static Byte_t TipoReprDeSignos() {
         signed char _referencia_ = -5;
         Byte_t* interno = (Byte_t*)&_referencia_;
        
@@ -350,14 +399,13 @@
         else
             return _COMPLEMENTO_DOS_;
     }
-
-
      
+      
     /*----------------------------------------------------------------------------*/
     /*----------------------------------------------------------------------------*/
      
      
-    Byte_t CopiarBuffer(
+    static Byte_t CopiarBuffer(
         void* BUFFER_ORIGEN,
         void* BUFFER_DESTINO,
         size_t LONGITUD_DEL_BUFFER_ORIGEN,
@@ -366,31 +414,28 @@
         if (
             BUFFER_DESTINO == NULL ||
             BUFFER_ORIGEN  == NULL
-        ) return 0x01;
-
-
+        ) return CopiarBuffer_Error_Punteros_Buffers_NULLs;
+ 
         if (
             LONGITUD_DEL_BUFFER_DESTINO == 0 ||
             LONGITUD_DEL_BUFFER_ORIGEN  == 0
-        ) return 0x02;
-
-
+        ) return CopiarBuffer_Error_Longitudes_Buffers_Cero;
+ 
         if (BUFFER_DESTINO != BUFFER_ORIGEN) {
             size_t i = 0;
             while (i < LONGITUD_DEL_BUFFER_DESTINO) {
                 if ((BUFFER_DESTINO+i) == BUFFER_ORIGEN)
-                    return 0x03;
+                    return CopiarBuffer_Error_Solapamiento_Buffers_Destino_Origen;
                 i++;
             }
             i = 0;
             while (i < LONGITUD_DEL_BUFFER_ORIGEN) {
                 if ((BUFFER_ORIGEN+i) == BUFFER_DESTINO)
-                    return 0x04;
+                    return CopiarBuffer_Error_Solapamiento_Buffers_Origen_Destino;
                 i++;
             }
-        } else return 0xf3;
-
-
+        } else return CopiarBuffer_Error_Mismos_Punteros_Origen_Destino;
+ 
         size_t i = 0;
         while (
             i < LONGITUD_DEL_BUFFER_DESTINO &&
@@ -399,8 +444,7 @@
             *((Byte_t*)BUFFER_DESTINO) = *((Byte_t*)BUFFER_ORIGEN);
             i++;
         }
-
-
+         
         return 0;
     }
      
@@ -427,7 +471,7 @@
  
     // TODO: expandir para Linux
     static Byte_t CapturarTeclaUTF8(
-        EVENTO_TECLA* INFORMACION_DE_LA_TECLA 
+        EVENTO_TECLA* INFORMACION_DE_LA_TECLA
     ) {
         if (INFORMACION_DE_LA_TECLA == NULL)
             return 0x01;
@@ -618,8 +662,7 @@
                                     break;
                             }
                         }
-
-
+ 
                         if (dtecla.dwControlKeyState != 0) {
                             if (!((dtecla.dwControlKeyState)&(~RIGHT_ALT_PRESSED))) {
                                 dinfo.teclas_modificadoras.ALT_DERECHA         |= ALT_DE_PRESIONADO;
@@ -671,31 +714,60 @@
     /*----------------------------------------------------------------------------*/
     /*----------------------------------------------------------------------------*/
 
+
     // TODO: expandir para ambos modos
     static Byte_t LimpiarConsola(void) {
+        Byte_t retorno = 0;
         #if LEO_OS < WINDOWS_GNRAL
             //implementacio de Windows
             HANDLE Salida_Estandar = NULL;
             HANDLE Error_Estandar  = NULL;
             Salida_Estandar = GetStdHandle(STD_OUTPUT_HANDLE);
             Error_Estandar  = GetStdHandle(STD_ERROR_HANDLE);
+ 
+            {
+                DWORD Modo = 0;
+ 
+                if (GetConsoleMode(Salida_Estandar, &Modo) == FALSE)
+                    retorno = LimpiarConsola_WinErrorNOFATAL_stdOut_Sin_Consola;
+                     
+                Modo = 0;
+                     
+                if (GetConsoleMode(Error_Estandar, &Modo) == FALSE)
+                    retorno = LimpiarConsola_WinErrorNOFATAL_stdOut_Sin_Consola;
+            }
+ 
+            if (retorno != LimpiarConsola_WinErrorNOFATAL_stdOut_Sin_Consola) {
+                CONSOLE_SCREEN_BUFFER_INFO informacion_buffer_consola = {0};
+                DWORD cantidad = 0;
+                COORD inicio = {0, 0};
 
-            DWORD Modo = 0;
+                if (GetConsoleScreenBufferInfo(&Salida_Estandar, &informacion_buffer_consola) == FALSE)
+                    return LimpiarConsola_WinError_GetConsoleScreemBufferInfo_stdOut;
+                
+                
+            }
 
-            if (GetConsoleMode(Salida_Estandar, &Modo) == FALSE)
-                return 0x01;
+            if (retorno != LimpiarConsola_WinErrorNOFATAL_stdErr_Sin_Consola) {
+
+            }
+
+            return retorno;
         #else
+
 
         #endif
     }
+ 
 
-
+     
     /*----------------------------------------------------------------------------*/
     /*----------------------------------------------------------------------------*/
  
+     
     // TODO: expandir función
     static Byte_t Entrada(
-        ENTRADA_PARAMs* _CONFIGURACIONES_Y_PARAMETROS_ 
+        ENTRADA_PARAMs* _CONFIGURACIONES_Y_PARAMETROS_
     ) {
          
         #define dConfParams (*_CONFIGURACIONES_Y_PARAMETROS_)
@@ -705,13 +777,13 @@
         #define BIT_4       0x08
  
         if (_CONFIGURACIONES_Y_PARAMETROS_ == NULL)
-            return 0x01;
+            return GENERAL_Error_Puntero_NULL;
  
         if (dConfParams._PUNTERO_BUFFER_DE_ENTRADA_ == NULL)
-            return 0x02;
+            return Entrada_Error_Puntero_BufferEntrada_NULL;
  
         if (dConfParams._LONGITUD_DEL_BUFFER_ == 0)
-            return 0x03;
+            return Entrada_Error_Puntero_LongitudBuffer_Cero;
        
         Bool_t permitir_configuracion   = No;
         Bool_t prompt_predeterminado    = No;
@@ -742,8 +814,7 @@
                         Si
                     ) && (por_actualizacion == No)
                 ) por_eficiencia = Si;
-
-
+ 
                 if (por_actualizacion == No && por_eficiencia == No)
                     por_actualizacion = Si;
             }
@@ -759,8 +830,7 @@
                     prompt_predeterminado = Si;
             }
         }
-
-
+ 
         Bool_t Termino = No;
          
         do {
@@ -772,15 +842,12 @@
                         EVENTO_TECLA evento = {0};
                         Imprimir("limite [%uint/", &i);
                         Imprimir("%uint]\n", &(dConfParams._LONGITUD_DEL_BUFFER_));
-
-
+ 
                     }
                 }
             }
-
-
-        } while (!Termino);
  
+        } while (!Termino);
          
         return 0x00;
     }
@@ -853,7 +920,7 @@
                 if (_TEXTO_C_[bytes] == '%') {
                     Bool_t exito = Si;
  
-                    goto saltear_logica_puntero_nulo;      //--->\
+                    goto saltear_logica_puntero_nulo;      //--->\ 
                                                           //     ↓
                     puntero_nulo:                        //      |
                     if (Escribir("NULL", 4, NULL) == Falso)
