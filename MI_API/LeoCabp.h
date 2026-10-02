@@ -53,10 +53,7 @@
     #define Si_BIT5 (0b00100000)
     #define Si_BIT6 (0b01000000)
     #define Si_BIT7 (0b10000000)
-
-
-
-
+ 
     #define No_BIT0 (~(0b00000001))
     #define No_BIT1 (~(0b00000010))
     #define No_BIT2 (~(0b00000100))
@@ -66,6 +63,8 @@
     #define No_BIT6 (~(0b01000000))
     #define No_BIT7 (~(0b10000000))
  
+    #define LIMPIAR_CONSOLA_OUTPUT 0x0f
+    #define LIMPIAR_CONSOLA_ERROR  0xf0
      
     #define IZQUIERDA  0x01
     #define DERECHA    0x02
@@ -133,59 +132,86 @@
     #define TECLA_F24           0x32
 
 
+
+
     // Errores de funciones
  
     /**
      * @date: La firma de las definiciones de error están hechas de este modo:
      *     CATEGORÍA | ERROR _ FATAL O NO | DATO ESPECIFICO DEL ERROR
-    
+   
      * CATEGORÍA        : puede ser desde una función a algo general.
      * ERROR            : indica que es un error. Además si viene acompañado de
      *                  la abreviación 'Win' o 'Lix' al inicio 'Error' quieren decir que
-     *                  son específico de ese entorno.
+     *                  son específico de ese entorno. 
      * FATAL O NO       : indica si es fatal o no, en los errores fatales
      *                  no se indica mientras que en los no fatales se indica
      *                  especeficiamente como 'NOFATAL'. Es decir, que la ausencia de
      *                  'NOFATAL' en el nombre de la definición, quiere decir que ES fatal.
      * DATO ESPECIFICO  : este apartado indica qué error describe la función en base con su
-     *                  Errno (Número de retorno)
+     *                  Número de retorno.
      */
     //======================================================================
-    // generales
+    /* generales */
     #define GENERAL_Error_Puntero_NULL                      0x01
     //======================================================================
-    // funciones portables
+    /* funciones portables */
     #define SacarDirectorioActual_Error_Punteros_NULLs      0x01
     #define SacarDirectorioActual_Error_Longitud_Corta      0x02
      
     #define LimpiarBuffer_Error_Puntero_NULL                0x01
- 
+     
     #define CopiarBuffer_Error_Punteros_Buffers_NULLs               0x01
     #define CopiarBuffer_Error_Longitudes_Buffers_Cero              0x02
     #define CopiarBuffer_Error_Solapamiento_Buffers_Destino_Origen  0x03
     #define CopiarBuffer_Error_Solapamiento_Buffers_Origen_Destino  0x04
     #define CopiarBuffer_Error_Mismos_Punteros_Origen_Destino        0x05
     //======================================================================
-    // funciones de entornos de Windows y Linux
-    #define CapturarTeclaUTF8_Error_Puntero_NULL          0x01
-    #define CapturarTeclaUTF8_Error_Escritos_Cero         0x03
-    #define CapturarTeclaUTF8_WinError_ReadConsole        0x02
-    #define CapturarTeclaUTF8_WinError_LecturaDeParSup1   0x05
-    #define CapturarTeclaUTF8_WinError_LecturaDeParSup2   0x06
-    #define CapturarTeclaUTF8_WinError_LecturaDeParSup3   0x07
- 
-    #define LimpiarConsola_WinErrorNOFATAL_stdOut_Sin_Consola         0x01
-    #define LimpiarConsola_WinErrorNOFATAL_stdErr_Sin_Consola         0x02
-    #define LimpiarConsola_WinError_GetConsoleScreemBufferInfo_stdOut 0x03
-    #define LimpiarConsola_WinError_GetConsoleScreemBufferInfo_stdErr 0x04
-    // TODO: EXPANDIR DEFINICIONES DE ERRORES DE 'LimpiarConsola' Y DE LA MISMA FUNCIÓN
- 
-    #define Entrada_Error_PunteroEstructura_NULL        0x01
-    #define Entrada_Error_Puntero_BufferEntrada_NULL    0x02
-    #define Entrada_Error_Puntero_LongitudBuffer_Cero   0x03
+    /* funciones de entornos de Windows y Linux */
+    // CapturarTeclaUTF8(...);
+    //////////////////////////////////////////////////////////// 
+    #define CapturarTeclaUTF8_Error_Puntero_NULL          0x01//
+    #define CapturarTeclaUTF8_Error_Escritos_Cero         0x03//
+    #define CapturarTeclaUTF8_WinError_ReadConsole        0x02//
+    #define CapturarTeclaUTF8_WinError_LecturaDeParSup1   0x05//
+    #define CapturarTeclaUTF8_WinError_LecturaDeParSup2   0x06//
+    #define CapturarTeclaUTF8_WinError_LecturaDeParSup3   0x07//
+    ////////////////////////////////////////////////////////////
+     
+    // LimpiarConsola(...);
+    ////////////////////////////////////////////////////////////////////////
+    #define LimpiarConsola_Error_Parametro_Invalido                   0xff//
+    /********************************************************************///
+    #define LimpiarConsola_WinError_GetStdHandle_stdOut               0x01//
+    #define LimpiarConsola_WinError_GetStdHandle_stdErr               0x10//
+    #define LimpiarConsola_WinError_stdOut_Sin_Consola                0x02//
+    #define LimpiarConsola_WinError_stdErr_Sin_Consola                0x20//
+    #define LimpiarConsola_WinError_GetConsoleScreemBufferInfo_stdOut 0x03//
+    #define LimpiarConsola_WinError_FillConsoleCharacterA_stdOut      0x04//
+    #define LimpiarConsola_WinError_FillConsoleAttribute_stdOut       0x05//
+    #define LimpiarConsola_WinError_SetCursor_stdOut                  0x06//
+    #define LimpiarConsola_WinError_GetConsoleScreemBufferInfo_stdErr 0x30//
+    #define LimpiarConsola_WinError_FillConsoleCharacterA_stdErr      0x40//
+    #define LimpiarConsola_WinError_FillConsoleAttribute_stdErr       0x50//
+    #define LimpiarConsola_WinError_SetCursor_stdErr                  0x60//
+    /********************************************************************///
+    #define LimpiarConsola_LixError_stdOut_Sin_Terminal               0X01//
+    #define LimpiarConsola_LixError_Write_stdOut                      0x02//
+    #define LimpiarConsola_LixError_stdErr_Sin_Terminal               0x10//
+    #define LimpiarConsola_LixError_Write_stdErr                      0x20//
+    ////////////////////////////////////////////////////////////////////////
+     
+    // Entrada(...);
+    //////////////////////////////////////////////////////////
+    #define Entrada_Error_PunteroEstructura_NULL        0x01//
+    #define Entrada_Error_Puntero_BufferEntrada_NULL    0x02//
+    #define Entrada_Error_LongitudBuffer_Cero           0x03//
     // TODO: EXPANDIR DEFINICIONES DE ERRORES DE 'Entrada' Y DE LA MISMA FUNCIÓN
- 
-    #define Escribir_Error Falso
+     
+    //////////////////////////////////////////////
+    #define Escribir_Error                  0x01//
+    #define Escribir_WinError_GetStdHandle  0x02//
+    //////////////////////////////////////////////
    
     //=========================================================================
 //--
@@ -267,9 +293,9 @@
         size_t      _CANTIDAD_DE_BYTES_
     );
     //=========================================================================
-    Byte_t TipoReprDeSignos();
+    static Byte_t TipoReprDeSignos();
     //=========================================================================
-    Byte_t CopiarBuffer(
+    static Byte_t CopiarBuffer(
         void* BUFFER_ORIGEN,
         void* BUFFER_DESTINO,
         size_t LONGITUD_DEL_BUFFER_ORIGEN,
@@ -280,7 +306,9 @@
         EVENTO_TECLA* INFORMACION_DE_LA_TECLA
     );
     //=========================================================================
-    static Byte_t LimpiarConsola(void);
+    static Byte_t LimpiarConsola(
+        Byte_t CONSOLA_A_LIMPIAR
+    );
     //=========================================================================
     static Byte_t Entrada(
         ENTRADA_PARAMs* _CONFIGURACIONES_Y_PARAMETROS_
@@ -400,7 +428,7 @@
             return _COMPLEMENTO_DOS_;
     }
      
-      
+     
     /*----------------------------------------------------------------------------*/
     /*----------------------------------------------------------------------------*/
      
@@ -713,54 +741,140 @@
      
     /*----------------------------------------------------------------------------*/
     /*----------------------------------------------------------------------------*/
-
-
-    // TODO: expandir para ambos modos
-    static Byte_t LimpiarConsola(void) {
-        Byte_t retorno = 0;
+ 
+ 
+    static Byte_t LimpiarConsola(
+        Byte_t CONSOLA_A_LIMPIAR
+    ) {
         #if LEO_OS < WINDOWS_GNRAL
             //implementacio de Windows
             HANDLE Salida_Estandar = NULL;
             HANDLE Error_Estandar  = NULL;
-            Salida_Estandar = GetStdHandle(STD_OUTPUT_HANDLE);
-            Error_Estandar  = GetStdHandle(STD_ERROR_HANDLE);
- 
-            {
-                DWORD Modo = 0;
- 
-                if (GetConsoleMode(Salida_Estandar, &Modo) == FALSE)
-                    retorno = LimpiarConsola_WinErrorNOFATAL_stdOut_Sin_Consola;
-                     
-                Modo = 0;
-                     
-                if (GetConsoleMode(Error_Estandar, &Modo) == FALSE)
-                    retorno = LimpiarConsola_WinErrorNOFATAL_stdOut_Sin_Consola;
-            }
- 
-            if (retorno != LimpiarConsola_WinErrorNOFATAL_stdOut_Sin_Consola) {
+             
+            if (CONSOLA_A_LIMPIAR == LIMPIAR_CONSOLA_OUTPUT) {
+                Salida_Estandar = GetStdHandle(STD_OUTPUT_HANDLE);
+                if (
+                    Salida_Estandar == INVALID_HANDLE_VALUE ||
+                    Salida_Estandar == NULL
+                ) return LimpiarConsola_WinError_GetStdHandle_stdOut;
+                {
+                    DWORD Modo = 0;
+                    if (GetConsoleMode(Salida_Estandar, &Modo) == FALSE)
+                        return LimpiarConsola_WinError_stdOut_Sin_Consola;
+                }
+                 
                 CONSOLE_SCREEN_BUFFER_INFO informacion_buffer_consola = {0};
                 DWORD cantidad = 0;
                 COORD inicio = {0, 0};
-
-                if (GetConsoleScreenBufferInfo(&Salida_Estandar, &informacion_buffer_consola) == FALSE)
-                    return LimpiarConsola_WinError_GetConsoleScreemBufferInfo_stdOut;
-                
-                
-            }
-
-            if (retorno != LimpiarConsola_WinErrorNOFATAL_stdErr_Sin_Consola) {
-
-            }
-
-            return retorno;
-        #else
-
-
-        #endif
-    }
  
-
-     
+                if (GetConsoleScreenBufferInfo(Salida_Estandar, &informacion_buffer_consola) == FALSE)
+                    return LimpiarConsola_WinError_GetConsoleScreemBufferInfo_stdOut;
+ 
+                DWORD Area_total = ((DWORD)informacion_buffer_consola.dwSize.Y) * ((DWORD)informacion_buffer_consola.dwSize.X);
+ 
+                if (FillConsoleOutputCharacterA(
+                    Salida_Estandar,
+                    ' ',
+                    Area_total,
+                    inicio,
+                    &cantidad
+                ) == FALSE) return LimpiarConsola_WinError_FillConsoleCharacterA_stdOut;
+             
+                if (FillConsoleOutputAttribute(
+                    Salida_Estandar,
+                    informacion_buffer_consola.wAttributes,
+                    Area_total,
+                    inicio,
+                    &cantidad
+                ) == FALSE) return LimpiarConsola_WinError_FillConsoleAttribute_stdOut;
+ 
+                if (SetConsoleCursorPosition(
+                    Salida_Estandar,
+                    inicio
+                ) == FALSE) return LimpiarConsola_WinError_SetCursor_stdOut;
+                 
+            } else if (CONSOLA_A_LIMPIAR == LIMPIAR_CONSOLA_ERROR) {
+                Error_Estandar  = GetStdHandle(STD_ERROR_HANDLE);
+                if (
+                    Error_Estandar == INVALID_HANDLE_VALUE ||
+                    Error_Estandar == NULL
+                ) return LimpiarConsola_WinError_GetStdHandle_stdErr;
+                {
+                    DWORD Modo = 0;
+                    if (GetConsoleMode(Error_Estandar, &Modo) == FALSE)
+                        return LimpiarConsola_WinError_stdErr_Sin_Consola;
+                }
+ 
+                CONSOLE_SCREEN_BUFFER_INFO informacion_buffer_consola = {0};
+                DWORD cantidad = 0;
+                COORD inicio = {0, 0};
+ 
+                if (GetConsoleScreenBufferInfo(Error_Estandar, &informacion_buffer_consola) == FALSE)
+                    return LimpiarConsola_WinError_GetConsoleScreemBufferInfo_stdErr;
+ 
+                DWORD Area_total = ((DWORD)informacion_buffer_consola.dwSize.Y) * ((DWORD)informacion_buffer_consola.dwSize.X);
+ 
+                if (FillConsoleOutputCharacterA(
+                    Error_Estandar,
+                    ' ',
+                    Area_total,
+                    inicio,
+                    &cantidad
+                ) == FALSE) return LimpiarConsola_WinError_FillConsoleCharacterA_stdErr;
+               
+                if (FillConsoleOutputAttribute(
+                    Error_Estandar,
+                    informacion_buffer_consola.wAttributes,
+                    Area_total,
+                    inicio,
+                    &cantidad
+                ) == FALSE) return LimpiarConsola_WinError_FillConsoleAttribute_stdErr;
+ 
+                if (SetConsoleCursorPosition(
+                    Error_Estandar,
+                    inicio
+                ) == FALSE) return LimpiarConsola_WinError_SetCursor_stdErr;
+                 
+            } else return LimpiarConsola_Error_Parametro_Invalido;
+            
+ 
+            return 0;
+        #else
+            int Descriptor = 0;
+            if (CONSOLA_A_LIMPIAR == LIMPIAR_CONSOLA_OUTPUT)
+                Descriptor = STDOUT_FILENO;
+            else if (CONSOLA_A_LIMPIAR == LIMPIAR_CONSOLA_ERROR)
+                Descriptor = STDERR_FILENO;
+            else return LimpiarConsola_Error_Parametro_Invalido;
+ 
+            if (isatty(Descriptor) == 0) {
+                if (Descriptor == STDOUT_FILENO)
+                    return LimpiarConsola_LixError_stdOut_Sin_Terminal;
+                else
+                    return LimpiarConsola_LixError_stdErr_Sin_Terminal;
+            }
+ 
+            const char Secuencia_Para_Limpiar[] = "\033[2J\033[H";
+ 
+            if (
+                write(
+                    Descriptor,
+                    Secuencia_Para_Limpiar,
+                    8
+                ) < 0
+            ) {
+                if (Descriptor == STDOUT_FILENO)
+                    return LimpiarConsola_LixError_Write_stdOut;
+                else
+                    return LimpiarConsola_LixError_Write_stdErr;
+            }
+ 
+            return 0;
+        #endif
+        
+    }
+  
+      
     /*----------------------------------------------------------------------------*/
     /*----------------------------------------------------------------------------*/
  
@@ -783,7 +897,7 @@
             return Entrada_Error_Puntero_BufferEntrada_NULL;
  
         if (dConfParams._LONGITUD_DEL_BUFFER_ == 0)
-            return Entrada_Error_Puntero_LongitudBuffer_Cero;
+            return Entrada_Error_LongitudBuffer_Cero;
        
         Bool_t permitir_configuracion   = No;
         Bool_t prompt_predeterminado    = No;
@@ -857,7 +971,7 @@
     /*----------------------------------------------------------------------------*/
      
    
-    static Bool_t Escribir(
+    static Byte_t Escribir(
         char*   _BUFFER_DE_TEXTO_C_,
         size_t  _CANTIDAD_DE_BYTES_A_ESCRIBIR_,
         size_t* _CANTIDAD_DE_BYTES_ESCRITOS_
@@ -865,11 +979,15 @@
         if (_BUFFER_DE_TEXTO_C_ == NULL)
             return Falso;
    
-        Bool_t retorno = Verdadero;
+        Byte_t retorno = 0;
          
         #if LEO_OS < WINDOWS_GNRAL
             DWORD escritos = 0;
             HANDLE consola = GetStdHandle(STD_OUTPUT_HANDLE);
+            if (
+                consola == INVALID_HANDLE_VALUE ||
+                consola == NULL
+            ) return Escribir_WinError_GetStdHandle;
        
             retorno = (Bool_t)WriteFile(
                 consola,
@@ -880,7 +998,7 @@
             );
        
             if (!retorno && escritos != (DWORD)_CANTIDAD_DE_BYTES_A_ESCRIBIR_)
-                retorno = Falso;
+                retorno = Escribir_Error;
         #else
             ssize_t escritos = write(
                 STDOUT_FILENO,
@@ -888,13 +1006,16 @@
                 _CANTIDAD_DE_BYTES_A_ESCRIBIR_
             );
             if (escritos == -1 || escritos != _CANTIDAD_DE_BYTES_A_ESCRIBIR_)
-                retorno = Falso;
+                retorno = Escribir_Error;
         #endif
      
         if (_CANTIDAD_DE_BYTES_ESCRITOS_ != NULL)
-            _CANTIDAD_DE_BYTES_ESCRITOS_ += escritos;
+            *_CANTIDAD_DE_BYTES_ESCRITOS_ += escritos;
          
-        return retorno;
+        if (retorno == Verdadero)
+            return 0;
+        else
+            return retorno;
     }
    
    
@@ -913,21 +1034,22 @@
         Uint_t bytes = 0;
         ssize_t Cantidad_escritos = 0;  
    
-        while (1) {  
+        while (1) {
             if (_TEXTO_C_[bytes] == 0x00) {  
                 break;  
             } else {
                 if (_TEXTO_C_[bytes] == '%') {
                     Bool_t exito = Si;
  
-                    goto saltear_logica_puntero_nulo;      //--->\ 
-                                                          //     ↓
-                    puntero_nulo:                        //      |
-                    if (Escribir("NULL", 4, NULL) == Falso)
-                        return -(Cantidad_escritos);   //        ↓
-                    goto volver;                      //         |  
-                                                     //          ↓
-                    saltear_logica_puntero_nulo:    //---<---<---/
+                    goto saltear_logica_puntero_nulo;
+                     
+                    puntero_nulo:
+
+                    if (Escribir("NULL", 4, NULL) != 0)
+                        return -(Cantidad_escritos);
+                    goto volver; 
+ 
+                    saltear_logica_puntero_nulo:    
  
                     if (_TEXTO_C_[bytes+1] == 's' || _TEXTO_C_[bytes+1] == 'S') {  
                         if (_PUNTERO_ARGUMENTO_O_NULL_ == NULL)  
@@ -939,11 +1061,13 @@
                         while (1) {  
                             if (_nuevo_TEXTO_C_[i] == 0x00)  
                                 break;  
-                            if (Escribir(
-                                &(_nuevo_TEXTO_C_[i]),  
-                                1,
-                                (size_t*)(&Cantidad_escritos)
-                            ) == Falso) return -(Cantidad_escritos);
+                            if (
+                                Escribir(
+                                    &(_nuevo_TEXTO_C_[i]),  
+                                    1,
+                                    (size_t*)(&Cantidad_escritos)
+                                ) != 0
+                            ) return -(Cantidad_escritos);
                             i++;  
                         }  
                     } else if (_TEXTO_C_[bytes+1] == 'c' || _TEXTO_C_[bytes+1] == 'C') {  
@@ -952,11 +1076,13 @@
                        
                         char _nuevo_caracter_ = *((char*)(_PUNTERO_ARGUMENTO_O_NULL_));  
                    
-                        if (Escribir(
-                            &_nuevo_caracter_,  
-                            1,
-                            (size_t*)(&Cantidad_escritos)
-                        ) == Falso) return -(Cantidad_escritos);  
+                        if (
+                            Escribir(
+                                &_nuevo_caracter_,  
+                                1,
+                                (size_t*)(&Cantidad_escritos)
+                            ) != 0
+                        ) return -(Cantidad_escritos);  
                     } else if (_TEXTO_C_[bytes+1] == 'x' || _TEXTO_C_[bytes+1] == 'X') {  
                         if (_PUNTERO_ARGUMENTO_O_NULL_ == NULL)  
                             goto puntero_nulo;  
@@ -987,11 +1113,13 @@
                                     *nibble += 0x37;  
                             }  
      
-                            if (Escribir(
-                                nibble,  
-                                1,
-                                (size_t*)(&Cantidad_escritos)
-                            ) == Falso) return -(Cantidad_escritos);
+                            if (
+                                Escribir(
+                                    nibble,  
+                                    1,
+                                    (size_t*)(&Cantidad_escritos)
+                                ) != 0
+                            ) return -(Cantidad_escritos);
      
                             if (termino == Si)  
                                 break;  
@@ -1008,17 +1136,21 @@
    
                         for (Byte_t i = 0; i < 8; i++) {  
                             if ((mascara >> i)&(_bin_)) {  
-                                if (Escribir(
-                                    "1",  
-                                    1,
-                                    (size_t*)(&Cantidad_escritos)
-                                ) == Falso) return -(Cantidad_escritos);
+                                if (
+                                    Escribir(
+                                        "1",  
+                                        1,
+                                        (size_t*)(&Cantidad_escritos)
+                                    ) != 0
+                                ) return -(Cantidad_escritos);
                             } else {  
-                                if (Escribir(
-                                    "0",  
-                                    1,
-                                    (size_t*)(&Cantidad_escritos)
-                                ) == Falso) return -(Cantidad_escritos);  
+                                if (
+                                    Escribir(
+                                        "0",  
+                                        1,
+                                        (size_t*)(&Cantidad_escritos)
+                                    ) != 0
+                                ) return -(Cantidad_escritos);  
                             }  
                         }  
                     } else if (
@@ -1083,8 +1215,7 @@
                                     i--;
                                 } while (numero != 0);
                             }
-                           
- 
+                             
                             if (es_negativo == Si) {
                                 numero_texto[i] = '-';
                                 i--;
@@ -1104,20 +1235,24 @@
  
                         while (i < 11) {
                             i++;
-                            if (Escribir(
-                                &(numero_texto[i]),
-                                1,
-                                (size_t*)(&Cantidad_escritos)
-                            ) == Falso) return -(Cantidad_escritos);
+                            if (
+                                Escribir(
+                                    &(numero_texto[i]),
+                                    1,
+                                    (size_t*)(&Cantidad_escritos)
+                                ) != 0
+                            ) return -(Cantidad_escritos);
                         }
                     }
                     else {  
                         no_exito:
-                        if (Escribir(
-                            (char*)&(_TEXTO_C_[bytes]),  
-                            1,
-                            (size_t*)(&Cantidad_escritos)
-                        ) == Falso) return -(Cantidad_escritos);
+                        if (
+                            Escribir(
+                                (char*)&(_TEXTO_C_[bytes]),  
+                                1,
+                                (size_t*)(&Cantidad_escritos)
+                            ) != 0
+                        ) return -(Cantidad_escritos);
                         exito = No;
                     }
                    
@@ -1129,15 +1264,19 @@
                     }
                     continue;  
                 } else {  
-                    if (Escribir(
-                        (char*)&(_TEXTO_C_[bytes]),  
-                        1,
-                        (size_t*)(&Cantidad_escritos)
-                    ) == Falso) return -(Cantidad_escritos);  
+                    if (
+                        Escribir(
+                            (char*)&(_TEXTO_C_[bytes]),  
+                            1,
+                            (size_t*)(&Cantidad_escritos)
+                        ) != 0
+                    ) return -(Cantidad_escritos);  
                 }  
             }  
             bytes++;  
         }  
+
+        return +(Cantidad_escritos);
     }
  
  
