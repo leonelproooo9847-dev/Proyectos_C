@@ -130,26 +130,30 @@
     #define TECLA_F22           0x30
     #define TECLA_F23           0x31
     #define TECLA_F24           0x32
-
-
-
-
+ 
+ 
     // Errores de funciones
  
     /**
      * @date: La firma de las definiciones de error están hechas de este modo:
-     *     CATEGORÍA | ERROR _ FATAL O NO | DATO ESPECIFICO DEL ERROR
+     *      CATEGORÍA | ERROR _ FATAL O NO | DATO ESPECIFICO DEL ERROR
    
      * CATEGORÍA        : puede ser desde una función a algo general.
      * ERROR            : indica que es un error. Además si viene acompañado de
      *                  la abreviación 'Win' o 'Lix' al inicio 'Error' quieren decir que
-     *                  son específico de ese entorno. 
+     *                  son específico de ese entorno.
      * FATAL O NO       : indica si es fatal o no, en los errores fatales
      *                  no se indica mientras que en los no fatales se indica
      *                  especeficiamente como 'NOFATAL'. Es decir, que la ausencia de
      *                  'NOFATAL' en el nombre de la definición, quiere decir que ES fatal.
      * DATO ESPECIFICO  : este apartado indica qué error describe la función en base con su
      *                  Número de retorno.
+     * @exception: algunas funciones no trabajan con valores de retornos
+     *           que indiquen exactamente su estado, como en el caso de Imprimir.
+     *           Imprimir devuelve 0 si el texto pasado es NULL,
+     *           - si tuvo exito devuelve la cantidad de caracteres escrito en positivo,
+     *           - si tuvo algún error al llamar Escribir, devuelve la cantidad de 
+     *             caracteres escritos en negativo.
      */
     //======================================================================
     /* generales */
@@ -165,11 +169,11 @@
     #define CopiarBuffer_Error_Longitudes_Buffers_Cero              0x02
     #define CopiarBuffer_Error_Solapamiento_Buffers_Destino_Origen  0x03
     #define CopiarBuffer_Error_Solapamiento_Buffers_Origen_Destino  0x04
-    #define CopiarBuffer_Error_Mismos_Punteros_Origen_Destino        0x05
+    #define CopiarBuffer_Error_Mismos_Punteros_Origen_Destino       0x05
     //======================================================================
     /* funciones de entornos de Windows y Linux */
     // CapturarTeclaUTF8(...);
-    //////////////////////////////////////////////////////////// 
+    ////////////////////////////////////////////////////////////
     #define CapturarTeclaUTF8_Error_Puntero_NULL          0x01//
     #define CapturarTeclaUTF8_Error_Escritos_Cero         0x03//
     #define CapturarTeclaUTF8_WinError_ReadConsole        0x02//
@@ -202,10 +206,18 @@
     ////////////////////////////////////////////////////////////////////////
      
     // Entrada(...);
-    //////////////////////////////////////////////////////////
-    #define Entrada_Error_PunteroEstructura_NULL        0x01//
-    #define Entrada_Error_Puntero_BufferEntrada_NULL    0x02//
-    #define Entrada_Error_LongitudBuffer_Cero           0x03//
+    //////////////////////////////////////////////////////////////
+    #define Entrada_Error_PunteroEstructura_NULL            0x01//
+    #define Entrada_Error_Puntero_BufferEntrada_NULL        0x02//
+    #define Entrada_Error_LongitudBuffer_Menor_A_Dos        0x03//
+    #define Entrada_Error_CapturarTeclaUTF8                 0x04//
+    #define Entrada_ErrorNOFATAL_Salida_Por_Tecla_Especial  0x05//
+    #define Entrada_Error_LimpiarConsola                    0x06//
+    #define Entrada_WinError_GetConsoleCP                   0x07//
+    #define Entrada_WinError_GetConsoleOutputCP             0x08//
+    #define Entrada_WinError_SetConsoleCP                   0x09//
+    #define Entrada_WinError_SetConsoleOutputCP             0x0f//
+
     // TODO: EXPANDIR DEFINICIONES DE ERRORES DE 'Entrada' Y DE LA MISMA FUNCIÓN
      
     //////////////////////////////////////////////
@@ -222,10 +234,20 @@
 //
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
-// estructuras:
+// estructuras y registros:
  
    
    
+    /*----------------------------------------------------------------------------*/
+ 
+    Byte_t REGISTRO_Imprimir = 0;
+    Byte_t REGISTRO_Escribir = 0;
+    Byte_t REGISTRO_LimpiarConsola = 0;
+ 
+    /*----------------------------------------------------------------------------*/
+ 
+ 
+     
     typedef struct _EVENTO_TECLA {
         char _CARACTER_UNICODE_[4];
         Byte_t BYTES_ESCRITOS;
@@ -241,7 +263,7 @@
             BoolBit_t NUM_LOCK_ACTIVO;
             BoolBit_t MAYUS_ACTIVO;
             BoolBit_t SCROLL_LOCK_ACTIVO;
-        } teclas_modificadoras;
+        } Campo_Teclas_modificadoras;
     } EVENTO_TECLA;
  
     /*----------------------------------------------------------------------------*/
@@ -252,13 +274,20 @@
         Bool_t _PERMITIR_CONFIGURACION_;
         struct {
             union {
+                Byte_t RESETEAR_BOOLEANOS;
                 BoolBit_t MOSTRAR_INDICADOR_DE_LONGITUD_USADA__BIT0;
                 BoolBit_t MOSTRAR_INDICADOR_POR_ACTUALIZACION_DE_CONSOLA__BIT1;
                 BoolBit_t MOSTRAR_INDICADOR_POR_PROCESO_EFICIENTE__BIT2;
                 BoolBit_t MOSTRAR_PROMPT_DE_ENTRADA__BIT3;
-            } Booleanos;
-            char* _PROMPT_DE_ENTRADA_TEXTO_C_;
-        } Configuracion;
+            } Campo_Booleanos;
+            union {
+                Byte_t RESETEAR_AVANZADOS;
+                BoolBit_t USAR_METODO_DE_SALIDA_CON_TECLA_ESPECIAL__BIT0;
+                BoolBit_t INDICAR_METODO_DE_SALIDA_AL_USUARIO__BIT1;
+            } Campo_Avanzados;
+            char*  _PROMPT_DE_ENTRADA_TEXTO_C_;
+            Byte_t _TECLA_ESPECIAL_DE_SALIDA_;
+        } Campo_Configuracion;
     } ENTRADA_PARAMs;
      
      
@@ -302,6 +331,12 @@
         size_t LONGITUD_DEL_BUFFER_DESTINO
     );
     //=========================================================================
+    static void ImprimirTipoTecla(
+        Byte_t TECLA_ESPECIAL_A_IMPRIMIR
+    );
+    //=========================================================================
+    //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+    //=========================================================================
     static Byte_t CapturarTeclaUTF8(
         EVENTO_TECLA* INFORMACION_DE_LA_TECLA
     );
@@ -314,13 +349,13 @@
         ENTRADA_PARAMs* _CONFIGURACIONES_Y_PARAMETROS_
     );
     //=========================================================================
-    static Bool_t Escribir(
+    static Byte_t Escribir(
         char*   _BUFFER_DE_TEXTO_C_,
         size_t  _CANTIDAD_DE_BYTES_A_ESCRIBIR_,
-        size_t* _CANTIDAD_DE_BYTES_ESCRITOS_
+        Sint_t* _CANTIDAD_DE_BYTES_ESCRITOS_
     );
     //=========================================================================
-    static ssize_t Imprimir(
+    static Sint_t Imprimir(
         const char* _TEXTO_C_,
         void* _PUNTERO_ARGUMENTO_O_NULL_
     );
@@ -477,6 +512,71 @@
     }
      
      
+    /*----------------------------------------------------------------------------*/
+    /*----------------------------------------------------------------------------*/
+     
+     
+    static void ImprimirTipoTecla(
+        Byte_t TECLA_ESPECIAL_A_IMPRIMIR
+    ) {
+        switch (TECLA_ESPECIAL_A_IMPRIMIR)
+        {
+            case TECLA_CONTROL_DE   :       Imprimir("CONTROL_D", NULL);     break;
+            case TECLA_CONTROL_IZ   :       Imprimir("CONTROL_I", NULL);     break;
+            case TECLA_CONTROL      :       Imprimir("CONTROL", NULL);        break;
+            case TECLA_ALT_DE       :       Imprimir("ALT_D", NULL);         break;
+            case TECLA_ALT_IZ       :       Imprimir("ALT_I", NULL);         break;
+            case TECLA_ALT          :       Imprimir("ALT", NULL);            break;
+            case TECLA_OS_DE        :       Imprimir("OS_D", NULL);          break;
+            case TECLA_OS_IZ        :       Imprimir("OS_I", NULL);          break;
+            case TECLA_OS           :       Imprimir("OS", NULL);             break;
+            case TECLA_SHIFT_DE     :       Imprimir("SHIFT_D", NULL);       break;
+            case TECLA_SHIFT_IZ     :       Imprimir("SHIFT_I", NULL);       break;
+            case TECLA_SHIFT        :       Imprimir("SHIFT", NULL);          break;
+            case TECLA_ESCAPE       :       Imprimir("ESCAPE", NULL);         break;
+            case TECLA_TAB          :       Imprimir("TAB", NULL);            break;
+            case TECLA_BACKSPACE    :       Imprimir("BACKSPACE", NULL);      break;
+            case TECLA_ENTER        :       Imprimir("ENTER", NULL);          break;
+            case TECLA_SUPRIMIR     :       Imprimir("SUPRIMIR", NULL);       break;
+            case TECLA_INSERTAR     :       Imprimir("INSERTAR", NULL);       break;
+            case TECLA_FLECHA_ARRIBA:       Imprimir("FLECHA_ARRIBA", NULL);  break;
+            case TECLA_FLECHA_ABAJO :       Imprimir("FLECHA_ABAJO", NULL);   break;
+            case TECLA_FLECHA_IZ    :       Imprimir("FLECHA_I", NULL);      break;
+            case TECLA_FLECHA_DE    :       Imprimir("FLECHA_D", NULL);      break;
+            case TECLA_INICIO       :       Imprimir("INICIO", NULL);         break;
+            case TECLA_FIN          :       Imprimir("FIN", NULL);            break;
+            case TECLA_PAG_ARRIBA   :       Imprimir("PAG_ARRIBA", NULL);     break;
+            case TECLA_PAG_ABAJO    :       Imprimir("PAG_ABAJO", NULL);      break;
+            case TECLA_F1       :   Imprimir("F1", NULL);     break;
+            case TECLA_F2       :   Imprimir("F2", NULL);     break;
+            case TECLA_F3       :   Imprimir("F3", NULL);     break;
+            case TECLA_F4       :   Imprimir("F4", NULL);     break;
+            case TECLA_F5       :   Imprimir("F5", NULL);     break;
+            case TECLA_F6       :   Imprimir("F6", NULL);     break;
+            case TECLA_F7       :   Imprimir("F7", NULL);     break;
+            case TECLA_F8       :   Imprimir("F8", NULL);     break;
+            case TECLA_F9       :   Imprimir("F9", NULL);     break;
+            case TECLA_F10      :   Imprimir("F10", NULL);    break;
+            case TECLA_F11      :   Imprimir("F11", NULL);    break;
+            case TECLA_F12      :   Imprimir("F12", NULL);    break;
+            case TECLA_F13      :   Imprimir("F13", NULL);    break;
+            case TECLA_F14      :   Imprimir("F14", NULL);    break;
+            case TECLA_F15      :   Imprimir("F15", NULL);    break;
+            case TECLA_F16      :   Imprimir("F16", NULL);    break;
+            case TECLA_F17      :   Imprimir("F17", NULL);    break;
+            case TECLA_F18      :   Imprimir("F18", NULL);    break;
+            case TECLA_F19      :   Imprimir("F19", NULL);    break;
+            case TECLA_F20      :   Imprimir("F20", NULL);    break;
+            case TECLA_F21      :   Imprimir("F21", NULL);    break;
+            case TECLA_F22      :   Imprimir("F22", NULL);    break;
+            case TECLA_F23      :   Imprimir("F23", NULL);    break;
+            case TECLA_F24      :   Imprimir("F24", NULL);    break;
+            default:
+                Imprimir("TECLA_INDEFINIDA", NULL); break; 
+        }
+    }
+     
+     
          
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
@@ -513,7 +613,7 @@
         );
         dinfo.BYTES_ESCRITOS = 0;
         dinfo.TIPO_DE_EVENTO = 0;
-        dinfo.teclas_modificadoras.HUBO_MODIFICADORES = 0;
+        dinfo.Campo_Teclas_modificadoras.HUBO_MODIFICADORES = 0;
  
         #if LEO_OS < WINDOWS_GNRAL
             //Implementación para Windows
@@ -604,119 +704,118 @@
                                 dinfo.BYTES_ESCRITOS = cantidad_de_bytes_escritos;
                             dinfo.TIPO_DE_EVENTO = TECLA_CARACTER;
                             break;
-                        } else {
-                            // produjo una tecla especial.
-                           
-                            switch (dtecla.wVirtualKeyCode)
-                            {
-                                case VK_CONTROL:
-                                    dinfo.TIPO_DE_EVENTO = TECLA_CONTROL; break;
-                                case VK_LCONTROL:
-                                    dinfo.IZQUIERDA_O_DERECHA = IZQUIERDA;
-                                    dinfo.TIPO_DE_EVENTO = TECLA_CONTROL; break;
-                                case VK_RCONTROL:
-                                    dinfo.IZQUIERDA_O_DERECHA = DERECHA;
-                                    dinfo.TIPO_DE_EVENTO = TECLA_CONTROL; break;
-                               
-                                case VK_MENU:
-                                    dinfo.TIPO_DE_EVENTO = TECLA_ALT; break;
-                                case VK_LMENU:
-                                    dinfo.IZQUIERDA_O_DERECHA = IZQUIERDA;
-                                    dinfo.TIPO_DE_EVENTO = TECLA_ALT; break;
-                                case VK_RMENU:
-                                    dinfo.IZQUIERDA_O_DERECHA = DERECHA;
-                                    dinfo.TIPO_DE_EVENTO = TECLA_ALT; break;
-                             
-                                case VK_LWIN:
-                                    dinfo.IZQUIERDA_O_DERECHA = IZQUIERDA;
-                                    dinfo.TIPO_DE_EVENTO = TECLA_OS; break;
-                                case VK_RWIN:
-                                    dinfo.IZQUIERDA_O_DERECHA = DERECHA;
-                                    dinfo.TIPO_DE_EVENTO = TECLA_OS; break;
-                           
-                                case VK_SHIFT:
-                                    dinfo.TIPO_DE_EVENTO = TECLA_SHIFT; break;
-                                case VK_LSHIFT:
-                                    dinfo.IZQUIERDA_O_DERECHA = IZQUIERDA;
-                                    dinfo.TIPO_DE_EVENTO = TECLA_SHIFT; break;
-                                case VK_RSHIFT:
-                                    dinfo.IZQUIERDA_O_DERECHA = DERECHA;
-                                    dinfo.TIPO_DE_EVENTO = TECLA_SHIFT; break;
-                           
-                                default:
-                                    dinfo.IZQUIERDA_O_DERECHA = 0;
-                                    switch (dtecla.wVirtualKeyCode)
-                                    {
-                                        case VK_ESCAPE: dinfo.TIPO_DE_EVENTO = TECLA_ESCAPE; break;
-                                        case VK_TAB:    dinfo.TIPO_DE_EVENTO = TECLA_TAB; break;
-                                        case VK_BACK:   dinfo.TIPO_DE_EVENTO = TECLA_BACKSPACE; break;
-                                        case VK_RETURN: dinfo.TIPO_DE_EVENTO = TECLA_ENTER; break;
-                                        case VK_DELETE: dinfo.TIPO_DE_EVENTO = TECLA_SUPRIMIR; break;
-                                        case VK_INSERT: dinfo.TIPO_DE_EVENTO = TECLA_INSERTAR; break;
-                                        case VK_UP:     dinfo.TIPO_DE_EVENTO = TECLA_FLECHA_ARRIBA; break;
-                                        case VK_DOWN:   dinfo.TIPO_DE_EVENTO = TECLA_FLECHA_ABAJO; break;
-                                        case VK_LEFT:   dinfo.TIPO_DE_EVENTO = TECLA_FLECHA_IZ; break;
-                                        case VK_RIGHT:  dinfo.TIPO_DE_EVENTO = TECLA_FLECHA_DE; break;
-                                        case VK_HOME:   dinfo.TIPO_DE_EVENTO = TECLA_INICIO; break;
-                                        case VK_END:    dinfo.TIPO_DE_EVENTO = TECLA_FIN; break;
-                                        case VK_PRIOR:  dinfo.TIPO_DE_EVENTO = TECLA_PAG_ARRIBA; break;
-                                        case VK_NEXT:   dinfo.TIPO_DE_EVENTO = TECLA_PAG_ABAJO; break;
-                                        case VK_F1: dinfo.TIPO_DE_EVENTO = TECLA_F1; break;
-                                        case VK_F2: dinfo.TIPO_DE_EVENTO = TECLA_F2; break;
-                                        case VK_F3: dinfo.TIPO_DE_EVENTO = TECLA_F3; break;
-                                        case VK_F4: dinfo.TIPO_DE_EVENTO = TECLA_F4; break;
-                                        case VK_F5: dinfo.TIPO_DE_EVENTO = TECLA_F5; break;
-                                        case VK_F6: dinfo.TIPO_DE_EVENTO = TECLA_F6; break;
-                                        case VK_F7: dinfo.TIPO_DE_EVENTO = TECLA_F7; break;
-                                        case VK_F8: dinfo.TIPO_DE_EVENTO = TECLA_F8; break;
-                                        case VK_F9: dinfo.TIPO_DE_EVENTO = TECLA_F9; break;
-                                        case VK_F10: dinfo.TIPO_DE_EVENTO = TECLA_F10; break;
-                                        case VK_F11: dinfo.TIPO_DE_EVENTO = TECLA_F11; break;
-                                        case VK_F12: dinfo.TIPO_DE_EVENTO = TECLA_F12; break;
-                                        case VK_F13: dinfo.TIPO_DE_EVENTO = TECLA_F13; break;
-                                        case VK_F14: dinfo.TIPO_DE_EVENTO = TECLA_F14; break;
-                                        case VK_F15: dinfo.TIPO_DE_EVENTO = TECLA_F15; break;
-                                        case VK_F16: dinfo.TIPO_DE_EVENTO = TECLA_F16; break;
-                                        case VK_F17: dinfo.TIPO_DE_EVENTO = TECLA_F17; break;
-                                        case VK_F18: dinfo.TIPO_DE_EVENTO = TECLA_F18; break;
-                                        case VK_F19: dinfo.TIPO_DE_EVENTO = TECLA_F19; break;
-                                        case VK_F20: dinfo.TIPO_DE_EVENTO = TECLA_F20; break;
-                                        case VK_F21: dinfo.TIPO_DE_EVENTO = TECLA_F21; break;
-                                        case VK_F22: dinfo.TIPO_DE_EVENTO = TECLA_F22; break;
-                                        case VK_F23: dinfo.TIPO_DE_EVENTO = TECLA_F23; break;
-                                        case VK_F24: dinfo.TIPO_DE_EVENTO = TECLA_F24; break;
-                                        default:     dinfo.TIPO_DE_EVENTO = TECLA_INDETERMINADA; break;
-                                    }
-                                    break;
-                            }
                         }
+                        switch (dtecla.wVirtualKeyCode)
+                        {
+                            case VK_CONTROL:
+                                dinfo.TIPO_DE_EVENTO = TECLA_CONTROL; break;
+                            case VK_LCONTROL:
+                                dinfo.IZQUIERDA_O_DERECHA = IZQUIERDA;
+                                dinfo.TIPO_DE_EVENTO = TECLA_CONTROL; break;
+                            case VK_RCONTROL:
+                                dinfo.IZQUIERDA_O_DERECHA = DERECHA;
+                                dinfo.TIPO_DE_EVENTO = TECLA_CONTROL; break;
+                            
+                            case VK_MENU:
+                                dinfo.TIPO_DE_EVENTO = TECLA_ALT; break;
+                            case VK_LMENU:
+                                dinfo.IZQUIERDA_O_DERECHA = IZQUIERDA;
+                                dinfo.TIPO_DE_EVENTO = TECLA_ALT; break;
+                            case VK_RMENU:
+                                dinfo.IZQUIERDA_O_DERECHA = DERECHA;
+                                dinfo.TIPO_DE_EVENTO = TECLA_ALT; break;
+                            
+                            case VK_LWIN:
+                                dinfo.IZQUIERDA_O_DERECHA = IZQUIERDA;
+                                dinfo.TIPO_DE_EVENTO = TECLA_OS; break;
+                            case VK_RWIN:
+                                dinfo.IZQUIERDA_O_DERECHA = DERECHA;
+                                dinfo.TIPO_DE_EVENTO = TECLA_OS; break;
+                        
+                            case VK_SHIFT:
+                                dinfo.TIPO_DE_EVENTO = TECLA_SHIFT; break;
+                            case VK_LSHIFT:
+                                dinfo.IZQUIERDA_O_DERECHA = IZQUIERDA;
+                                dinfo.TIPO_DE_EVENTO = TECLA_SHIFT; break;
+                            case VK_RSHIFT:
+                                dinfo.IZQUIERDA_O_DERECHA = DERECHA;
+                                dinfo.TIPO_DE_EVENTO = TECLA_SHIFT; break;
+                        
+                            default:
+                                dinfo.IZQUIERDA_O_DERECHA = 0;
+                                switch (dtecla.wVirtualKeyCode)
+                                {
+                                    case VK_ESCAPE: dinfo.TIPO_DE_EVENTO = TECLA_ESCAPE; break;
+                                    case VK_TAB:    dinfo.TIPO_DE_EVENTO = TECLA_TAB; break;
+                                    case VK_BACK:   dinfo.TIPO_DE_EVENTO = TECLA_BACKSPACE; break;
+                                    case VK_RETURN: dinfo.TIPO_DE_EVENTO = TECLA_ENTER; break;
+                                    case VK_DELETE: dinfo.TIPO_DE_EVENTO = TECLA_SUPRIMIR; break;
+                                    case VK_INSERT: dinfo.TIPO_DE_EVENTO = TECLA_INSERTAR; break;
+                                    case VK_UP:     dinfo.TIPO_DE_EVENTO = TECLA_FLECHA_ARRIBA; break;
+                                    case VK_DOWN:   dinfo.TIPO_DE_EVENTO = TECLA_FLECHA_ABAJO; break;
+                                    case VK_LEFT:   dinfo.TIPO_DE_EVENTO = TECLA_FLECHA_IZ; break;
+                                    case VK_RIGHT:  dinfo.TIPO_DE_EVENTO = TECLA_FLECHA_DE; break;
+                                    case VK_HOME:   dinfo.TIPO_DE_EVENTO = TECLA_INICIO; break;
+                                    case VK_END:    dinfo.TIPO_DE_EVENTO = TECLA_FIN; break;
+                                    case VK_PRIOR:  dinfo.TIPO_DE_EVENTO = TECLA_PAG_ARRIBA; break;
+                                    case VK_NEXT:   dinfo.TIPO_DE_EVENTO = TECLA_PAG_ABAJO; break;
+                                    case VK_F1: dinfo.TIPO_DE_EVENTO = TECLA_F1; break;
+                                    case VK_F2: dinfo.TIPO_DE_EVENTO = TECLA_F2; break;
+                                    case VK_F3: dinfo.TIPO_DE_EVENTO = TECLA_F3; break;
+                                    case VK_F4: dinfo.TIPO_DE_EVENTO = TECLA_F4; break;
+                                    case VK_F5: dinfo.TIPO_DE_EVENTO = TECLA_F5; break;
+                                    case VK_F6: dinfo.TIPO_DE_EVENTO = TECLA_F6; break;
+                                    case VK_F7: dinfo.TIPO_DE_EVENTO = TECLA_F7; break;
+                                    case VK_F8: dinfo.TIPO_DE_EVENTO = TECLA_F8; break;
+                                    case VK_F9: dinfo.TIPO_DE_EVENTO = TECLA_F9; break;
+                                    case VK_F10: dinfo.TIPO_DE_EVENTO = TECLA_F10; break;
+                                    case VK_F11: dinfo.TIPO_DE_EVENTO = TECLA_F11; break;
+                                    case VK_F12: dinfo.TIPO_DE_EVENTO = TECLA_F12; break;
+                                    case VK_F13: dinfo.TIPO_DE_EVENTO = TECLA_F13; break;
+                                    case VK_F14: dinfo.TIPO_DE_EVENTO = TECLA_F14; break;
+                                    case VK_F15: dinfo.TIPO_DE_EVENTO = TECLA_F15; break;
+                                    case VK_F16: dinfo.TIPO_DE_EVENTO = TECLA_F16; break;
+                                    case VK_F17: dinfo.TIPO_DE_EVENTO = TECLA_F17; break;
+                                    case VK_F18: dinfo.TIPO_DE_EVENTO = TECLA_F18; break;
+                                    case VK_F19: dinfo.TIPO_DE_EVENTO = TECLA_F19; break;
+                                    case VK_F20: dinfo.TIPO_DE_EVENTO = TECLA_F20; break;
+                                    case VK_F21: dinfo.TIPO_DE_EVENTO = TECLA_F21; break;
+                                    case VK_F22: dinfo.TIPO_DE_EVENTO = TECLA_F22; break;
+                                    case VK_F23: dinfo.TIPO_DE_EVENTO = TECLA_F23; break;
+                                    case VK_F24: dinfo.TIPO_DE_EVENTO = TECLA_F24; break;
+                                    default:     dinfo.TIPO_DE_EVENTO = TECLA_INDETERMINADA; break;
+                                }
+                                break;
+                        }
+                        
  
                         if (dtecla.dwControlKeyState != 0) {
                             if (!((dtecla.dwControlKeyState)&(~RIGHT_ALT_PRESSED))) {
-                                dinfo.teclas_modificadoras.ALT_DERECHA         |= ALT_DE_PRESIONADO;
+                                dinfo.Campo_Teclas_modificadoras.ALT_DERECHA         |= ALT_DE_PRESIONADO;
                                 dinfo.IZQUIERDA_O_DERECHA = DERECHA;
                             }
                             if (!((dtecla.dwControlKeyState)&(~LEFT_ALT_PRESSED))) {
-                                dinfo.teclas_modificadoras.ALT_IZQUIERDA       |= ALT_IZ_PRESIONADO;
+                                dinfo.Campo_Teclas_modificadoras.ALT_IZQUIERDA       |= ALT_IZ_PRESIONADO;
                                 dinfo.IZQUIERDA_O_DERECHA = IZQUIERDA;
                             }
                             if (!((dtecla.dwControlKeyState)&(~RIGHT_CTRL_PRESSED))) {
-                                dinfo.teclas_modificadoras.CTRL_DERECHA        |= CONTROL_DE_PRESIONADO;
+                                dinfo.Campo_Teclas_modificadoras.CTRL_DERECHA        |= CONTROL_DE_PRESIONADO;
                                 dinfo.IZQUIERDA_O_DERECHA = DERECHA;
                             }
                             if (!((dtecla.dwControlKeyState)&(~LEFT_CTRL_PRESSED))) {
-                                dinfo.teclas_modificadoras.CTRL_IZQUIERDA      |= CONTROL_IZ_PRESIONADO;
+                                dinfo.Campo_Teclas_modificadoras.CTRL_IZQUIERDA      |= CONTROL_IZ_PRESIONADO;
                                 dinfo.IZQUIERDA_O_DERECHA = IZQUIERDA;
                             }
                             if (!((dtecla.dwControlKeyState)&(~SHIFT_PRESSED)))
-                                dinfo.teclas_modificadoras.SHIFT               |= SHIFT_PRESIONADO;
+                                dinfo.Campo_Teclas_modificadoras.SHIFT               |= SHIFT_PRESIONADO;
                             if (!((dtecla.dwControlKeyState)&(~NUMLOCK_ON)))
-                                dinfo.teclas_modificadoras.NUM_LOCK_ACTIVO     |= NUMLOCK_ACTVO;
+                                dinfo.Campo_Teclas_modificadoras.NUM_LOCK_ACTIVO     |= NUMLOCK_ACTVO;
                             if (!((dtecla.dwControlKeyState)&(~CAPSLOCK_ON)))
-                                dinfo.teclas_modificadoras.MAYUS_ACTIVO        |= MAYUS_ACTVO;
+                                dinfo.Campo_Teclas_modificadoras.MAYUS_ACTIVO        |= MAYUS_ACTVO;
                             if (!((dtecla.dwControlKeyState)&(~SCROLLLOCK_ON)))
-                                dinfo.teclas_modificadoras.SCROLL_LOCK_ACTIVO  |= SCROLL_LOCK_ACTVO;
-                        } else dinfo.teclas_modificadoras.HUBO_MODIFICADORES = No;
+                                dinfo.Campo_Teclas_modificadoras.SCROLL_LOCK_ACTIVO  |= SCROLL_LOCK_ACTVO;
+                        } else
+                            dinfo.Campo_Teclas_modificadoras.HUBO_MODIFICADORES = No;
                         break;
                          
                     } else continue;
@@ -836,7 +935,7 @@
                 ) == FALSE) return LimpiarConsola_WinError_SetCursor_stdErr;
                  
             } else return LimpiarConsola_Error_Parametro_Invalido;
-            
+           
  
             return 0;
         #else
@@ -871,10 +970,10 @@
  
             return 0;
         #endif
-        
+       
     }
-  
-      
+ 
+     
     /*----------------------------------------------------------------------------*/
     /*----------------------------------------------------------------------------*/
  
@@ -885,84 +984,241 @@
     ) {
          
         #define dConfParams (*_CONFIGURACIONES_Y_PARAMETROS_)
-        #define BIT_1       0x01
-        #define BIT_2       0X02
-        #define BIT_3       0x04
-        #define BIT_4       0x08
+        #define BIT_0       0x01
+        #define BIT_1       0X02
+        #define BIT_2       0x04
+        #define BIT_3       0x08
+
+
+        #if LEO_OS < WINDOWS_GNRAL
+            UINT entrada_antes;
+            UINT salida_antes;
+            if ((entrada_antes = GetConsoleCP()) == 0)
+                return Entrada_WinError_GetConsoleCP;
+            if ((salida_antes = GetConsoleOutputCP()) == 0)
+                return Entrada_WinError_GetConsoleOutputCP;
+            
+            if (SetConsoleCP(CP_UTF8) == FALSE)
+                return Entrada_WinError_SetConsoleCP;
+            if (SetConsoleOutputCP(CP_UTF8) == FALSE)
+                return Entrada_WinError_SetConsoleOutputCP;
+        #else
+            /* ... */
+        #endif
  
         if (_CONFIGURACIONES_Y_PARAMETROS_ == NULL)
             return GENERAL_Error_Puntero_NULL;
  
         if (dConfParams._PUNTERO_BUFFER_DE_ENTRADA_ == NULL)
             return Entrada_Error_Puntero_BufferEntrada_NULL;
+        
+        char* buffer = dConfParams._PUNTERO_BUFFER_DE_ENTRADA_;
  
-        if (dConfParams._LONGITUD_DEL_BUFFER_ == 0)
-            return Entrada_Error_LongitudBuffer_Cero;
-       
-        Bool_t permitir_configuracion   = No;
-        Bool_t prompt_predeterminado    = No;
-        Bool_t mostrar_indicador    = No;
-        Bool_t por_actualizacion    = No;
-        Bool_t por_eficiencia       = No;
-        Bool_t mostrar_prompt       = No;
-         
+        if (dConfParams._LONGITUD_DEL_BUFFER_ < 2)
+            return Entrada_Error_LongitudBuffer_Menor_A_Dos;
+        
+        size_t longitud = dConfParams._LONGITUD_DEL_BUFFER_;
+
         if (dConfParams._PERMITIR_CONFIGURACION_ == Si) {
-            permitir_configuracion = Si;
+            
+            Bool_t prompt_predeterminado    = No;
+            Bool_t mostrar_indicador        = No;
+            Bool_t por_actualizacion        = No;
+            Bool_t por_eficiencia           = No;
+            Bool_t mostrar_prompt           = No;
+            Bool_t usar_salida_especial     = No;
+            Bool_t indicar_metodo_de_salida = No;
+            Byte_t metodo = 0;
+
             if (
-                (dConfParams.Configuracion.Booleanos.MOSTRAR_INDICADOR_DE_LONGITUD_USADA__BIT0 & BIT_1)
-                ==
-                Si
+                (dConfParams.Campo_Configuracion.Campo_Booleanos.MOSTRAR_INDICADOR_DE_LONGITUD_USADA__BIT0 & BIT_0)
             ) mostrar_indicador = Si;
              
             if (mostrar_indicador) {
                 if (
-                    (dConfParams.Configuracion.Booleanos.MOSTRAR_INDICADOR_POR_ACTUALIZACION_DE_CONSOLA__BIT1 & BIT_2)
-                    ==
-                    Si
+                    (dConfParams.Campo_Configuracion.Campo_Booleanos.MOSTRAR_INDICADOR_POR_ACTUALIZACION_DE_CONSOLA__BIT1 & BIT_1)
                 ) por_actualizacion = Si;
                  
                 if (
                     (
-                        (dConfParams.Configuracion.Booleanos.MOSTRAR_INDICADOR_POR_PROCESO_EFICIENTE__BIT2 & BIT_3)
-                        ==
-                        Si
+                        (dConfParams.Campo_Configuracion.Campo_Booleanos.MOSTRAR_INDICADOR_POR_PROCESO_EFICIENTE__BIT2 & BIT_2)
                     ) && (por_actualizacion == No)
                 ) por_eficiencia = Si;
  
                 if (por_actualizacion == No && por_eficiencia == No)
-                    por_actualizacion = Si;
+                    mostrar_indicador = No;
             }
              
             if (
-                (dConfParams.Configuracion.Booleanos.MOSTRAR_PROMPT_DE_ENTRADA__BIT3 & BIT_4)
-                ==
-                Si
+                (dConfParams.Campo_Configuracion.Campo_Booleanos.MOSTRAR_PROMPT_DE_ENTRADA__BIT3 & BIT_3)
             ) mostrar_prompt = Si;
              
             if (mostrar_prompt == Si) {
-                if (dConfParams.Configuracion._PROMPT_DE_ENTRADA_TEXTO_C_ == NULL)
+                if (dConfParams.Campo_Configuracion._PROMPT_DE_ENTRADA_TEXTO_C_ == NULL)
                     prompt_predeterminado = Si;
             }
-        }
- 
-        Bool_t Termino = No;
+
+            if (
+                (dConfParams.Campo_Configuracion.Campo_Avanzados.USAR_METODO_DE_SALIDA_CON_TECLA_ESPECIAL__BIT0 & BIT_0)
+            ) usar_salida_especial = Si;
+
+            if (
+                (dConfParams.Campo_Configuracion._TECLA_ESPECIAL_DE_SALIDA_)
+                !=
+                TECLA_CARACTER
+            ) metodo = dConfParams.Campo_Configuracion._TECLA_ESPECIAL_DE_SALIDA_;
+            else metodo = TECLA_TAB;
+
+            if (
+                (dConfParams.Campo_Configuracion.Campo_Avanzados.INDICAR_METODO_DE_SALIDA_AL_USUARIO__BIT1 & BIT_1)
+            ) indicar_metodo_de_salida = Si;
          
-        do {
-            if (mostrar_indicador == Si) {
-                if (por_actualizacion == Si) {
-                    size_t i = 0;
-                    ssize_t escritos_en_pantalla = 0;
+             
+            EVENTO_TECLA evento = {0};
+            size_t i = 0;
+            if (mostrar_indicador) {
+                if (por_actualizacion) {
                     while (1) {
-                        EVENTO_TECLA evento = {0};
-                        Imprimir("limite [%uint/", &i);
-                        Imprimir("%uint]\n", &(dConfParams._LONGITUD_DEL_BUFFER_));
+                        if (LimpiarConsola(LIMPIAR_CONSOLA_OUTPUT) != 0)
+                            return Entrada_Error_LimpiarConsola;
+                        
+                        if (indicar_metodo_de_salida) {
+                            Imprimir("[", NULL);
+                            ImprimirTipoTecla(metodo);
+                            Imprimir("]: salir\n", NULL);
+                        }
+
+                        Imprimir("límite [", NULL);
+                        Imprimir("%int/", &i);
+                        Imprimir("%int]\n", &longitud);
+
+                        if (mostrar_prompt) {
+                            if (prompt_predeterminado)
+                                Imprimir(">>> ", NULL);
+                            else
+                                Imprimir("%s", (void*)(dConfParams.Campo_Configuracion._PROMPT_DE_ENTRADA_TEXTO_C_));
+                        }
+
+                        Imprimir("%s", (void*)buffer);
+
+                        do {
+                            if (CapturarTeclaUTF8(&evento))
+                                return Entrada_Error_CapturarTeclaUTF8;
+                             
+                            if (usar_salida_especial) {
+                                if (evento.TIPO_DE_EVENTO == metodo)
+                                    return Entrada_ErrorNOFATAL_Salida_Por_Tecla_Especial;
+                            }
+                        } while (
+                            evento.TIPO_DE_EVENTO != TECLA_CARACTER  &&
+                            evento.TIPO_DE_EVENTO != TECLA_ENTER     &&
+                            evento.TIPO_DE_EVENTO != TECLA_BACKSPACE
+                        );
+         
+                        if (
+                            evento.TIPO_DE_EVENTO == TECLA_BACKSPACE ||
+                            (evento._CARACTER_UNICODE_)[0] == '\b' 
+                        ) {
+                            if (i > 0) {
+                                while (1) {
+                                    if ((buffer[i-1] & 0xC0) == 0x80) {
+                                        i--;
+                                        buffer[i] = 0x00;
+                                    } else {
+                                        i--;
+                                        buffer[i] = 0x00;
+                                        break;
+                                    }
+                                }
+                            }
+                        } else if (
+                            evento.TIPO_DE_EVENTO == TECLA_ENTER    ||
+                            (evento._CARACTER_UNICODE_)[0] == '\n'  ||
+                            (evento._CARACTER_UNICODE_)[0] == '\r'
+                        ) {
+                            break;
+                        } else {
+                            if ((i + evento.BYTES_ESCRITOS) < longitud) {
+                                Byte_t escritos = 0;
+                                while (escritos < evento.BYTES_ESCRITOS) {
+                                    buffer[i] = (evento._CARACTER_UNICODE_[escritos]);
+                                    escritos++;
+                                    i++;
+                                }
+                                buffer[i] = 0x00;
+                            }
+                        }
  
                     }
+                } else {
+                    /* ... */
                 }
             }
+             
+        } else { /********************************************************/
+            // Estandar de la función.
+            EVENTO_TECLA evento = {0};
+            size_t i = 0;
+            
+            while (1) {
  
-        } while (!Termino);
-         
+                do {
+                    if (CapturarTeclaUTF8(&evento))
+                        return Entrada_Error_CapturarTeclaUTF8;
+                } while (
+                    evento.TIPO_DE_EVENTO != TECLA_CARACTER  &&
+                    evento.TIPO_DE_EVENTO != TECLA_ENTER     &&
+                    evento.TIPO_DE_EVENTO != TECLA_BACKSPACE
+                );
+ 
+                if (
+                    evento.TIPO_DE_EVENTO == TECLA_BACKSPACE ||
+                    (evento._CARACTER_UNICODE_)[0] == '\b' 
+                ) {
+                    if (i > 0) {
+                        while (1) {
+                            if ((buffer[i-1] & 0xC0) == 0x80) {
+                                i--;
+                                buffer[i] = 0x00;
+                            } else {
+                                i--;
+                                buffer[i] = 0x00;
+                                break;
+                            }
+                        }
+                        Imprimir("\b \b", NULL);
+                    }
+                } else if (
+                    evento.TIPO_DE_EVENTO == TECLA_ENTER    ||
+                    (evento._CARACTER_UNICODE_)[0] == '\n'  ||
+                    (evento._CARACTER_UNICODE_)[0] == '\r'
+                ) {
+                    break;
+                } else {
+                    if ((i + evento.BYTES_ESCRITOS) < longitud) {
+                        Byte_t escritos = 0;
+                        while (escritos < evento.BYTES_ESCRITOS) {
+                            buffer[i] = (evento._CARACTER_UNICODE_[escritos]);
+                            escritos++;
+                            i++;
+                        }
+                        buffer[i] = 0x00;
+                        Imprimir("%s", (void*)((buffer+i)-escritos));
+                    }
+                }
+ 
+            } 
+        } //>>>> >>>> >>>> >>>> aquí termina el ELSE <<<< <<<< <<<< <<<<//
+        
+        #if LEO_OS < WINDOWS_GNRAL
+        if (SetConsoleCP(entrada_antes) == FALSE)
+            return Entrada_WinError_SetConsoleCP;
+        if (SetConsoleOutputCP(salida_antes) == FALSE)
+            return Entrada_WinError_SetConsoleOutputCP;
+        #else
+            /* ... */
+        #endif
+
         return 0x00;
     }
  
@@ -974,7 +1230,7 @@
     static Byte_t Escribir(
         char*   _BUFFER_DE_TEXTO_C_,
         size_t  _CANTIDAD_DE_BYTES_A_ESCRIBIR_,
-        size_t* _CANTIDAD_DE_BYTES_ESCRITOS_
+        Sint_t* _CANTIDAD_DE_BYTES_ESCRITOS_
     ) {
         if (_BUFFER_DE_TEXTO_C_ == NULL)
             return Falso;
@@ -1010,7 +1266,7 @@
         #endif
      
         if (_CANTIDAD_DE_BYTES_ESCRITOS_ != NULL)
-            *_CANTIDAD_DE_BYTES_ESCRITOS_ += escritos;
+            *_CANTIDAD_DE_BYTES_ESCRITOS_ += (Sint_t)escritos;
          
         if (retorno == Verdadero)
             return 0;
@@ -1023,7 +1279,7 @@
     /*----------------------------------------------------------------------------*/
  
  
-    static ssize_t Imprimir(
+    static Sint_t Imprimir(
         const char* _TEXTO_C_,
         void* _PUNTERO_ARGUMENTO_O_NULL_
     ) {
@@ -1032,7 +1288,7 @@
             return 0;
    
         Uint_t bytes = 0;
-        ssize_t Cantidad_escritos = 0;  
+        Sint_t Cantidad_escritos = 0;  
    
         while (1) {
             if (_TEXTO_C_[bytes] == 0x00) {  
@@ -1045,9 +1301,10 @@
                      
                     puntero_nulo:
 
+
                     if (Escribir("NULL", 4, NULL) != 0)
                         return -(Cantidad_escritos);
-                    goto volver; 
+                    goto volver;
  
                     saltear_logica_puntero_nulo:    
  
@@ -1065,7 +1322,7 @@
                                 Escribir(
                                     &(_nuevo_TEXTO_C_[i]),  
                                     1,
-                                    (size_t*)(&Cantidad_escritos)
+                                    (&Cantidad_escritos)
                                 ) != 0
                             ) return -(Cantidad_escritos);
                             i++;  
@@ -1080,7 +1337,7 @@
                             Escribir(
                                 &_nuevo_caracter_,  
                                 1,
-                                (size_t*)(&Cantidad_escritos)
+                                (&Cantidad_escritos)
                             ) != 0
                         ) return -(Cantidad_escritos);  
                     } else if (_TEXTO_C_[bytes+1] == 'x' || _TEXTO_C_[bytes+1] == 'X') {  
@@ -1117,7 +1374,7 @@
                                 Escribir(
                                     nibble,  
                                     1,
-                                    (size_t*)(&Cantidad_escritos)
+                                    (&Cantidad_escritos)
                                 ) != 0
                             ) return -(Cantidad_escritos);
      
@@ -1140,7 +1397,7 @@
                                     Escribir(
                                         "1",  
                                         1,
-                                        (size_t*)(&Cantidad_escritos)
+                                        (&Cantidad_escritos)
                                     ) != 0
                                 ) return -(Cantidad_escritos);
                             } else {  
@@ -1148,7 +1405,7 @@
                                     Escribir(
                                         "0",  
                                         1,
-                                        (size_t*)(&Cantidad_escritos)
+                                        (&Cantidad_escritos)
                                     ) != 0
                                 ) return -(Cantidad_escritos);  
                             }  
@@ -1239,7 +1496,7 @@
                                 Escribir(
                                     &(numero_texto[i]),
                                     1,
-                                    (size_t*)(&Cantidad_escritos)
+                                    (&Cantidad_escritos)
                                 ) != 0
                             ) return -(Cantidad_escritos);
                         }
@@ -1250,7 +1507,7 @@
                             Escribir(
                                 (char*)&(_TEXTO_C_[bytes]),  
                                 1,
-                                (size_t*)(&Cantidad_escritos)
+                                (&Cantidad_escritos)
                             ) != 0
                         ) return -(Cantidad_escritos);
                         exito = No;
@@ -1268,13 +1525,14 @@
                         Escribir(
                             (char*)&(_TEXTO_C_[bytes]),  
                             1,
-                            (size_t*)(&Cantidad_escritos)
+                            (&Cantidad_escritos)
                         ) != 0
                     ) return -(Cantidad_escritos);  
                 }  
             }  
             bytes++;  
         }  
+
 
         return +(Cantidad_escritos);
     }
