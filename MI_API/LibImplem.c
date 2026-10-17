@@ -479,6 +479,8 @@
             ahora.c_lflag &= ~(ICANON | ECHO);
            
             tcsetattr(STDIN_FILENO, TCSANOW, &ahora);
+
+            // TODO: Expandir la implementación en Linux
         #endif
         #undef dtecla
         #undef dinfo
@@ -498,7 +500,7 @@
             HANDLE Salida_Estandar = NULL;
             HANDLE Error_Estandar  = NULL;
              
-            if (CONSOLA_A_LIMPIAR == LIMPIAR_CONSOLA_OUTPUT) {
+            if (CONSOLA_A_LIMPIAR == CONSOLA_OUTPUT) {
                 Salida_Estandar = GetStdHandle(STD_OUTPUT_HANDLE);
                 if (
                     Salida_Estandar == INVALID_HANDLE_VALUE ||
@@ -540,7 +542,7 @@
                     inicio
                 ) == FALSE) return LimpiarConsola_WinError_SetCursor_stdOut;
                  
-            } else if (CONSOLA_A_LIMPIAR == LIMPIAR_CONSOLA_ERROR) {
+            } else if (CONSOLA_A_LIMPIAR == CONSOLA_ERROR) {
                 Error_Estandar  = GetStdHandle(STD_ERROR_HANDLE);
                 if (
                     Error_Estandar == INVALID_HANDLE_VALUE ||
@@ -648,8 +650,6 @@
                 return Entrada_WinError_SetConsoleCP;
             if (SetConsoleOutputCP(CP_UTF8) == FALSE)
                 return Entrada_WinError_SetConsoleOutputCP;
-        #else
-            /* ... */
         #endif
  
         if (_CONFIGURACIONES_Y_PARAMETROS_ == NULL)
@@ -707,7 +707,7 @@
             size_t i = 0;
             if (mostrar_indicador) {
                 while (1) {
-                    if (LimpiarConsola(LIMPIAR_CONSOLA_OUTPUT) != 0)
+                    if (LimpiarConsola(CONSOLA_OUTPUT) != 0)
                         return Entrada_Error_LimpiarConsola;
                         
                     if (indicar_metodo_de_salida) {
@@ -906,8 +906,6 @@
             return Entrada_WinError_SetConsoleCP;
         if (SetConsoleOutputCP(salida_antes) == FALSE)
             return Entrada_WinError_SetConsoleOutputCP;
-        #else
-            /* ... */
         #endif
 
         #undef dConfParams
@@ -927,7 +925,8 @@
     Byte_t Escribir(
         char*   _BUFFER_DE_TEXTO_C_,
         size_t  _CANTIDAD_DE_BYTES_A_ESCRIBIR_,
-        Sint_t* _CANTIDAD_DE_BYTES_ESCRITOS_
+        Sint_t* _CANTIDAD_DE_BYTES_ESCRITOS_,
+        Byte_t  _CONSOLA_STDOUT_O_STDERR_
     ) {
         if (_BUFFER_DE_TEXTO_C_ == NULL)
             return GENERAL_Error_Puntero_NULL;
@@ -936,7 +935,14 @@
          
         #if LEO_OS < WINDOWS_GNRAL
             DWORD escritos = 0;
-            HANDLE consola = GetStdHandle(STD_OUTPUT_HANDLE);
+            HANDLE consola;
+            if (_CONSOLA_STDOUT_O_STDERR_ == CONSOLA_OUTPUT)
+                consola = GetStdHandle(STD_OUTPUT_HANDLE);
+            else if (_CONSOLA_STDOUT_O_STDERR_ == CONSOLA_ERROR)
+                consola = GetStdHandle(STD_ERROR_HANDLE);
+            else
+                return Escribir_Error_Param_Invalido;
+            
             if (
                 consola == INVALID_HANDLE_VALUE ||
                 consola == NULL
@@ -950,20 +956,37 @@
                 NULL
             );
        
-            if (!retorno && escritos != (DWORD)_CANTIDAD_DE_BYTES_A_ESCRIBIR_)
-                retorno = Escribir_Error;
+            if (!retorno)
+                retorno = Escribir_WinError_WriteFile;
+            else if (escritos != (DWORD)_CANTIDAD_DE_BYTES_A_ESCRIBIR_)
+                retorno = Escribir_ErrorNOFATAL_Escritos_No_Iguales;
             else
                 retorno = 0;
+            
+            
         #else
+            int consola;
+
+            if (_CONSOLA_STDOUT_O_STDERR_ == CONSOLA_OUTPUT)
+                consola = STDOUT_FILENO;
+            else if (_CONSOLA_STDOUT_O_STDERR_ == CONSOLA_ERROR)
+                consola = STDERR_FILENO;
+            else
+                return Escribir_Error_Param_Invalido;
+            
             ssize_t escritos = write(
-                STDOUT_FILENO,
+                consola,
                 _BUFFER_DE_TEXTO_C_,
                 _CANTIDAD_DE_BYTES_A_ESCRIBIR_
             );
-            if (escritos == -1 || escritos != _CANTIDAD_DE_BYTES_A_ESCRIBIR_)
-                retorno = Escribir_Error;
+            if (escritos == -1)
+                retorno = Escribir_LixError_write;
+            else if (escritos != _CANTIDAD_DE_BYTES_A_ESCRIBIR_)
+                retorno = Escribir_ErrorNOFATAL_Escritos_No_Iguales;
             else
                 retorno = 0;
+            
+            
         #endif
      
         if (_CANTIDAD_DE_BYTES_ESCRITOS_ != NULL)
@@ -987,6 +1010,7 @@
    
         Uint_t bytes = 0;
         Sint_t Cantidad_escritos = 0;  
+        Byte_t RetEscribir = 0;
    
         while (1) {
             if (_TEXTO_C_[bytes] == 0x00) {  
@@ -998,10 +1022,11 @@
                     goto saltear_logica_puntero_nulo;
                      
                     puntero_nulo:
-
-
-                    if (Escribir("NULL", 4, NULL) != 0)
-                        return -(Cantidad_escritos);
+                    RetEscribir = Escribir("NULL", 4, NULL, CONSOLA_OUTPUT);
+                    if (
+                        RetEscribir != 0 &&
+                        RetEscribir != Escribir_ErrorNOFATAL_Escritos_No_Iguales
+                    ) return -(Cantidad_escritos); 
                     goto volver;
  
                     saltear_logica_puntero_nulo:    
@@ -1015,13 +1040,16 @@
    
                         while (1) {  
                             if (_nuevo_TEXTO_C_[i] == 0x00)  
-                                break;  
+                                break; 
+                            RetEscribir = Escribir(
+                                &(_nuevo_TEXTO_C_[i]),  
+                                1,
+                                (&Cantidad_escritos),
+                                CONSOLA_OUTPUT
+                            );
                             if (
-                                Escribir(
-                                    &(_nuevo_TEXTO_C_[i]),  
-                                    1,
-                                    (&Cantidad_escritos)
-                                ) != 0
+                                RetEscribir != 0 &&
+                                RetEscribir != Escribir_ErrorNOFATAL_Escritos_No_Iguales
                             ) return -(Cantidad_escritos);
                             i++;  
                         }  
@@ -1031,12 +1059,16 @@
                        
                         char _nuevo_caracter_ = *((char*)(_PUNTERO_ARGUMENTO_O_NULL_));  
                    
+                        
+                        RetEscribir = Escribir(
+                            &_nuevo_caracter_,  
+                            1,
+                            (&Cantidad_escritos),
+                            CONSOLA_OUTPUT
+                        );
                         if (
-                            Escribir(
-                                &_nuevo_caracter_,  
-                                1,
-                                (&Cantidad_escritos)
-                            ) != 0
+                            RetEscribir != 0 &&
+                            RetEscribir != Escribir_ErrorNOFATAL_Escritos_No_Iguales
                         ) return -(Cantidad_escritos);  
                     } else if (_TEXTO_C_[bytes+1] == 'x' || _TEXTO_C_[bytes+1] == 'X') {  
                         if (_PUNTERO_ARGUMENTO_O_NULL_ == NULL)  
@@ -1068,13 +1100,17 @@
                                     *nibble += 0x37;  
                             }  
      
+                            
+                            RetEscribir = Escribir(
+                                nibble,  
+                                1,
+                                (&Cantidad_escritos),
+                                CONSOLA_OUTPUT
+                            );
                             if (
-                                Escribir(
-                                    nibble,  
-                                    1,
-                                    (&Cantidad_escritos)
-                                ) != 0
-                            ) return -(Cantidad_escritos);
+                                RetEscribir != 0 &&
+                                RetEscribir != Escribir_ErrorNOFATAL_Escritos_No_Iguales
+                            ) return -(Cantidad_escritos); 
      
                             if (termino == Si)  
                                 break;  
@@ -1090,22 +1126,28 @@
                         Byte_t _bin_ = *((Byte_t*)(_PUNTERO_ARGUMENTO_O_NULL_));  
    
                         for (Byte_t i = 0; i < 8; i++) {  
-                            if ((mascara >> i)&(_bin_)) {  
+                            if ((mascara >> i)&(_bin_)) { 
+                                RetEscribir = Escribir(
+                                    "1",  
+                                    1,
+                                    (&Cantidad_escritos),
+                                    CONSOLA_OUTPUT
+                                );
                                 if (
-                                    Escribir(
-                                        "1",  
-                                        1,
-                                        (&Cantidad_escritos)
-                                    ) != 0
-                                ) return -(Cantidad_escritos);
+                                    RetEscribir != 0 &&
+                                    RetEscribir != Escribir_ErrorNOFATAL_Escritos_No_Iguales
+                                ) return -(Cantidad_escritos); 
                             } else {  
+                                RetEscribir = Escribir(
+                                    "0",  
+                                    1,
+                                    (&Cantidad_escritos),
+                                    CONSOLA_OUTPUT
+                                );
                                 if (
-                                    Escribir(
-                                        "0",  
-                                        1,
-                                        (&Cantidad_escritos)
-                                    ) != 0
-                                ) return -(Cantidad_escritos);  
+                                    RetEscribir != 0 &&
+                                    RetEscribir != Escribir_ErrorNOFATAL_Escritos_No_Iguales
+                                ) return -(Cantidad_escritos); 
                             }  
                         }  
                     } else if (
@@ -1190,23 +1232,29 @@
  
                         while (i < 11) {
                             i++;
+                            RetEscribir = Escribir(
+                                &(numero_texto[i]),
+                                1,
+                                (&Cantidad_escritos),
+                                CONSOLA_OUTPUT
+                            );
                             if (
-                                Escribir(
-                                    &(numero_texto[i]),
-                                    1,
-                                    (&Cantidad_escritos)
-                                ) != 0
+                                RetEscribir != 0 &&
+                                RetEscribir != Escribir_ErrorNOFATAL_Escritos_No_Iguales
                             ) return -(Cantidad_escritos);
                         }
                     }
                     else {  
                         no_exito:
+                        RetEscribir = Escribir(
+                            (char*)&(_TEXTO_C_[bytes]),  
+                            1,
+                            (&Cantidad_escritos),
+                            CONSOLA_OUTPUT
+                        );
                         if (
-                            Escribir(
-                                (char*)&(_TEXTO_C_[bytes]),  
-                                1,
-                                (&Cantidad_escritos)
-                            ) != 0
+                            RetEscribir != 0 &&
+                            RetEscribir != Escribir_ErrorNOFATAL_Escritos_No_Iguales
                         ) return -(Cantidad_escritos);
                         exito = No;
                     }
@@ -1219,19 +1267,21 @@
                     }
                     continue;  
                 } else {  
+                    RetEscribir = Escribir(
+                        (char*)&(_TEXTO_C_[bytes]),  
+                        1,
+                        (&Cantidad_escritos),
+                        CONSOLA_OUTPUT
+                    );
                     if (
-                        Escribir(
-                            (char*)&(_TEXTO_C_[bytes]),  
-                            1,
-                            (&Cantidad_escritos)
-                        ) != 0
-                    ) return -(Cantidad_escritos);  
+                        RetEscribir != 0 &&
+                        RetEscribir != Escribir_ErrorNOFATAL_Escritos_No_Iguales
+                    ) return -(Cantidad_escritos);
                 }  
             }  
             bytes++;  
         }  
-
-
+ 
         return +(Cantidad_escritos);
         #undef C
     }
