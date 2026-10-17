@@ -56,8 +56,9 @@
     #define No_BIT6 (~(0b01000000))
     #define No_BIT7 (~(0b10000000))
  
-    #define LIMPIAR_CONSOLA_OUTPUT 0x0f
-    #define LIMPIAR_CONSOLA_ERROR  0xf0
+    #define CONSOLA_OUTPUT 0x0f // 00001111
+    #define CONSOLA_INPUT  0x3c // 00111100
+    #define CONSOLA_ERROR  0xf0 // 11110000
      
     #define IZQUIERDA  0x01
     #define DERECHA    0x02
@@ -212,11 +213,16 @@
     #define Entrada_WinError_SetConsoleOutputCP             0x0f//
     // TODO: EXPANDIR DEFINICIONES DE ERRORES DE 'Entrada' Y DE LA MISMA FUNCIÓN
      
-    //////////////////////////////////////////////
-    #define Escribir_Error_Puntero_NULL     0x01//
-    #define Escribir_Error                  0x02//
-    #define Escribir_WinError_GetStdHandle  0x03//
-    //////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////
+    #define Escribir_Error_Param_Invalido                           0x01//
+    #define Escribir_Error_Puntero_NULL                             0x02//
+    #define Escribir_ErrorNOFATAL_Escritos_No_Iguales               0x05//
+    /******************************************************************///
+    #define Escribir_WinError_GetStdHandle                          0x03//
+    #define Escribir_WinError_WriteFile                             0x04//
+    /******************************************************************///
+    #define Escribir_LixError_write                                 0x04//
+    //////////////////////////////////////////////////////////////////////
    
     //=========================================================================
 //--
@@ -335,7 +341,8 @@
     Byte_t Escribir(
         char*   _BUFFER_DE_TEXTO_C_,
         size_t  _CANTIDAD_DE_BYTES_A_ESCRIBIR_,
-        Sint_t* _CANTIDAD_DE_BYTES_ESCRITOS_
+        Sint_t* _CANTIDAD_DE_BYTES_ESCRITOS_,
+        Byte_t  _CONSOLA_STDOUT_O_STDERR_
     );
     //=========================================================================
     Sint_t Imprimir(
