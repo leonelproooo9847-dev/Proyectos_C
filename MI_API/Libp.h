@@ -1,4 +1,4 @@
-// LEOCABp_H
+// LIBP_H
 #ifndef LIBP_H
  
     #define LIBP_H 2
@@ -266,16 +266,16 @@
         size_t  _LONGITUD_DEL_BUFFER_;
         Bool_t _PERMITIR_CONFIGURACION_;
         struct {
-            union {
-                BoolBit_t MOSTRAR_INDICADOR_DE_LONGITUD_USADA__BIT0;
-                BoolBit_t MOSTRAR_PROMPT_DE_ENTRADA__BIT1;
-            } Campo_Booleanos;
-            union {
-                BoolBit_t USAR_METODO_DE_SALIDA_CON_TECLA_ESPECIAL__BIT0;
-                BoolBit_t INDICAR_METODO_DE_SALIDA_AL_USUARIO__BIT1;
+            Bool_t MOSTRAR_INDICADOR_DE_LONGITUD_USADA;
+            Bool_t MOSTRAR_PROMPT_DE_ENTRADA;
+            const char*  _PROMPT_DE_ENTRADA_TEXTO_C_;
+            struct {
+                Bool_t USAR_METODO_DE_SALIDA_CON_TECLA_ESPECIAL;
+                Byte_t TECLA_ESPECIAL_DE_SALIDA;
+                Bool_t INDICAR_METODO_DE_SALIDA_AL_USUARIO;
+                Bool_t MOSTRAR_MENSAJE_ANTES_DE_LA_ENTRADA;
+                const char*  _MENSAJE_;
             } Campo_Avanzados;
-            char*  _PROMPT_DE_ENTRADA_TEXTO_C_;
-            Byte_t _TECLA_ESPECIAL_DE_SALIDA_;
         } Campo_Configuracion;
     } ENTRADA_PARAMs;
      
