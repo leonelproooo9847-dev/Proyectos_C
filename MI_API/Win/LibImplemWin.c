@@ -314,6 +314,18 @@ void ImprimirTipoTecla(
 }
     
     
+/*----------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
+
+
+void ImprimirMensajeDeError(
+    void*  _PUNTERO_DE_RETORNO_O_DE_CODIGO_DE_ERROR_,
+    Byte_t _FUNCION_ESPECIFICA_DEL_ERROR_
+) {
+    
+}
+
+
         
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
@@ -772,18 +784,18 @@ Byte_t Entrada(
                     return Entrada_Error_LimpiarConsola;
                 
                 if (mostrar_mensaje) {
-                    i = 0;
+                    size_t iterador = 0;
                     while (1) {
-                        if (mensaje_de_usuario[i] != '\0')
+                        if (mensaje_de_usuario[iterador] != '\0')
                             Escribir(
-                                &(mensaje_de_usuario[i]),
+                                &(mensaje_de_usuario[iterador]),
                                 1,
                                 NULL,
                                 CONSOLA_OUTPUT
                             );
-                        else if (mensaje_de_usuario[i+1] == '\0')
+                        else if (mensaje_de_usuario[iterador+1] == '\0')
                             break;
-                        i++;
+                        iterador++;
                     }
                 }
                     
@@ -858,7 +870,19 @@ Byte_t Entrada(
             
         } else {
             if (mostrar_mensaje) {
-                Imprimir(mensaje_de_usuario, NULL);
+                size_t iterador = 0;
+                while (1) {
+                    if (mensaje_de_usuario[iterador] != '\0')
+                        Escribir(
+                            &(mensaje_de_usuario[iterador]),
+                            1,
+                            NULL,
+                            CONSOLA_OUTPUT
+                        );
+                    else if (mensaje_de_usuario[iterador+1] == '\0')
+                        break;
+                    iterador++;
+                }
             }
 
             if (indicar_metodo_de_salida) {
