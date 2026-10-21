@@ -194,7 +194,7 @@
     #define Entrada_Error_GetConsoleOutputCP                0x08//
     #define Entrada_Error_SetConsoleCP                      0x09//
     #define Entrada_Error_SetConsoleOutputCP                0x0f//
-    // TODO: EXPANDIR DEFINICIONES DE ERRORES DE 'Entrada' Y DE LA MISMA FUNCIÓN
+    //////////////////////////////////////////////////////////////
      
     //////////////////////////////////////////////////////////////////////
     #define Escribir_Error_Param_Invalido                           0x01//
@@ -319,6 +319,11 @@
     //=========================================================================
     void ImprimirTipoTecla(
         Byte_t TECLA_ESPECIAL_A_IMPRIMIR
+    );
+    //=========================================================================
+    void ImprimirMensajeDeError(
+        void*  _PUNTERO_DE_RETORNO_O_DE_CODIGO_DE_ERROR_,
+        Byte_t _FUNCION_ESPECIFICA_DEL_ERROR_
     );
     //=========================================================================
     //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
