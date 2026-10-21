@@ -143,16 +143,15 @@
     #define CopiarBuffer_Error_Solapamiento_Buffers_Origen_Destino  0x04
     #define CopiarBuffer_Error_Mismos_Punteros_Origen_Destino       0x05
     ////////////////////////////////////////////////////////////////////////
-    #define ComprobarListaDeTexto_Error_Puntero_NULL                        0x01
-    #define ComprobarListaDeTexto_Error_Longitud_Cero                       0x02
-    #define ComprobarListaDeTexto_Error_Inicio_Con_Cero                     0x03
-    #define ComprobarListaDeTexto_Error_Etapa_No_Terminada_EXCEP1           0x04
-    #define ComprobarListaDeTexto_Error_Etapa_No_Terminada_EXCEP2           0x05
-    #define ComprobarListaDeTexto_Error_Etapa_No_Terminada_EXCEP3           0x06
-    #define ComprobarListaDeTexto_Error_Estructura_NULL                     0x07
-    #define ComprobarListaDeTexto_Error_Puntero_De_Lista_De_Texto_C_NULL    0x08
-    #define ComprobarListaDeTexto_Error_Cantidad_De_Sizes_Cero              0x09
-    #define ComprobarListaDeTexto_Error_Lista_Sizes_Insuficientes           0x0A
+    #define ComprobarListaDeTexto_Error_Longitud_Cero                       0x01
+    #define ComprobarListaDeTexto_Error_Inicio_Con_Cero                     0x02
+    #define ComprobarListaDeTexto_Error_Etapa_No_Terminada_EXCEP1           0x03
+    #define ComprobarListaDeTexto_Error_Etapa_No_Terminada_EXCEP2           0x04
+    #define ComprobarListaDeTexto_Error_Etapa_No_Terminada_EXCEP3           0x05
+    #define ComprobarListaDeTexto_Error_Estructura_NULL                     0x06
+    #define ComprobarListaDeTexto_Error_Puntero_De_Lista_De_Texto_C_NULL    0x07
+    #define ComprobarListaDeTexto_Error_Cantidad_De_Sizes_Cero              0x08
+    #define ComprobarListaDeTexto_Error_Lista_Sizes_Insuficientes           0x09
     //======================================================================
     // CapturarTeclaUTF8(...);
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -183,7 +182,7 @@
      
     // Entrada(...);
     //////////////////////////////////////////////////////////////
-    #define Entrada_Error_PunteroEstructura_NULL            0x01//
+    #define Entrada_Error_Puntero_Estructura_NULL            0x01//
     #define Entrada_Error_Puntero_BufferEntrada_NULL        0x02//
     #define Entrada_Error_LongitudBuffer_Menor_A_Dos        0x03//
     #define Entrada_Error_Lista_De_Mensajes                 0x10//
@@ -205,7 +204,18 @@
     //////////////////////////////////////////////////////////////////////
    
     //=========================================================================
-//--
+
+    // funciones especificas:
+    //=========================================================================
+    #define Especif_SacarDirectorioActual       0x01
+    #define Especif_LimpiarBuffer               0x02
+    #define Especif_CopiarBuffer                0x03
+    #define Especif_ComprobarListaDeTexto       0x04
+    #define Especif_CapturarTeclaUTF8           0x05
+    #define Especif_LimpiarConsola              0x06
+    #define Especif_Entrada                     0x07
+    #define Especif_Escribir                    0x08
+    //--
 //
 //
 //
