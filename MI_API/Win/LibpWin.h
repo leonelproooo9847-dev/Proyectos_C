@@ -162,6 +162,20 @@
     #define CapturarTeclaUTF8_Error_Lectura_De_Par_Suplente__KeyDown_Falso                   0x06//
     #define CapturarTeclaUTF8_Error_Lectura_De_Par_Suplente__Suplente_No_Correspondiente     0x07//
     ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    // CambiarCodPag_UTF8() y RestaurarCodPag()
+    //////////////////////////////////////////////////////////////////
+    #define CambiarCodPag_UTF8_Error_SetConsoleCP_Entrada       0x01//
+    #define CambiarCodPag_UTF8_Error_SetConsoleOutputCP_Salida  0x02//
+    #define CambiarCodPag_UTF8_Error_GetConsoleCP_Entrada       0x03//
+    #define CambiarCodPag_UTF8_Error_GetConsoleOutputCP_Salida  0x04//
+    /****************************************************************/
+    #define RestaurarCodPag_Error_SetConsoleCP_Entrada          0x01//
+    #define RestaurarCodPag_Error_SetConsoleOutputCP_Salida     0x02//
+    #define RestaurarCodPag_Error_REGISTRO_ENTRADA              0x03//
+    #define RestaurarCodPag_Error_REGISTRO_SALIDA               0x04//
+    //////////////////////////////////////////////////////////////////
+
      
     // LimpiarConsola(...);
     ////////////////////////////////////////////////////////////////////////
@@ -212,10 +226,13 @@
     #define Especif_CopiarBuffer                0x03
     #define Especif_ComprobarListaDeTexto       0x04
     #define Especif_CapturarTeclaUTF8           0x05
-    #define Especif_LimpiarConsola              0x06
-    #define Especif_Entrada                     0x07
-    #define Especif_Escribir                    0x08
-    //--
+    #define Especif_CambiarCodPag_UTF8          0x06
+    #define Especif_RestaurarCodPag             0x07
+    #define Especif_LimpiarConsola              0x08
+    #define Especif_Entrada                     0x09
+    #define Especif_Escribir                    0x0A
+
+//--
 //
 //
 //
@@ -224,11 +241,9 @@
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 // estructuras y registros:
- 
-   
+
    
     /*----------------------------------------------------------------------------*/
- 
  
      
     typedef struct _EVENTO_TECLA {
@@ -341,6 +356,9 @@
     Byte_t CapturarTeclaUTF8(
         EVENTO_TECLA* INFORMACION_DE_LA_TECLA
     );
+    //=========================================================================
+    Byte_t CambiarCodPag_UTF8();
+    Byte_t RestaurarCodPag();
     //=========================================================================
     Byte_t LimpiarConsola(
         Byte_t CONSOLA_A_LIMPIAR
