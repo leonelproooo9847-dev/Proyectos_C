@@ -7,6 +7,8 @@
 #include <windows.h>
 
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+    Uint_t REGISTRO_DE_ENTRADA_CodPag = 0;
+    Uint_t REGISTRO_DE_SALIDA_CodPag  = 0;
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 //
 //
@@ -131,14 +133,17 @@ Byte_t CopiarBuffer(
     ) return CopiarBuffer_Error_Longitudes_Buffers_Cero;
 
     if (BUFFER_DESTINO != BUFFER_ORIGEN) {
-        uintptr_t ptrDestino = (uintptr_t)BUFFER_DESTINO;
-        uintptr_t ptrOrigen  = (uintptr_t)BUFFER_ORIGEN;
-        if (ptrDestino < ptrOrigen) {
-            if (ptrOrigen-ptrDestino < LONGITUD_DEL_BUFFER_DESTINO)
+        size_t i = 0;
+        while (i < LONGITUD_DEL_BUFFER_DESTINO) {
+            if ((BUFFER_DESTINO+i) == BUFFER_ORIGEN)
                 return CopiarBuffer_Error_Solapamiento_Buffers_Destino_Origen;
-        } else {
-            if (ptrDestino-ptrOrigen < LONGITUD_DEL_BUFFER_ORIGEN)
+            i++;
+        }
+        i = 0;
+        while (i < LONGITUD_DEL_BUFFER_ORIGEN) {
+            if ((BUFFER_ORIGEN+i) == BUFFER_DESTINO)
                 return CopiarBuffer_Error_Solapamiento_Buffers_Origen_Destino;
+            i++;
         }
     } else return CopiarBuffer_Error_Mismos_Punteros_Origen_Destino;
 
@@ -234,7 +239,7 @@ Byte_t ComprobarListaDeTexto(
 
         i++;
     }
-    if (ETAPAS == NADA)
+    if (ETAPAS == CARACTER_CERO)
         return ComprobarListaDeTexto_Error_Etapa_No_Terminada_EXCEP1;
     else if (ETAPAS == TEXTO_C)
         return ComprobarListaDeTexto_Error_Etapa_No_Terminada_EXCEP2;
@@ -559,7 +564,54 @@ void ImprimirMensajeDeError(
                     break;
                 }
             break;
-
+            //==============================================================
+            // CambiarCP_UTF8 y RestaurarCP
+            //==============================================================
+            case Especif_CambiarCodPag_UTF8:
+            case Especif_RestaurarCodPag:
+                if (Especif == Especif_CambiarCodPag_UTF8)
+                    Imprimir("CambiarCodPag_UTF8 :\n\t", NULL);
+                else
+                    Imprimir("RestaurarCodPag : \n\t", NULL);
+                switch (*((Byte_t*)ptrRet)) {
+                    case 1:
+                        Imprimir(
+                            "Error API windows.h : SetConsoleCP",
+                            NULL
+                        );
+                    break;
+                    case 2:
+                        Imprimir(
+                            "Error API windows.h : SetConsoleOutputCP",
+                            NULL
+                        );
+                    break;
+                    case 3:
+                        if (Especif == Especif_CambiarCodPag_UTF8)
+                            Imprimir(
+                                "Error API windows.h : GetConsoleCP",
+                                NULL
+                            );
+                        else
+                            Imprimir(
+                                "El REGISTRO_DE_ENTRADA_CodPag es Cero",
+                                NULL
+                            );
+                    break;
+                    case 4:
+                        if (Especif == Especif_CambiarCodPag_UTF8)
+                            Imprimir(
+                                "Error API windows.h : GetConsoleOutputCP",
+                                NULL
+                            );
+                        else
+                            Imprimir(
+                                "El REGISTRO_DE_SALIDA_CodPag es Cero",
+                                NULL
+                            );  
+                    break;
+                }
+            break;
             //==============================================================
             // LimpiarConsola
             //==============================================================
@@ -1072,6 +1124,48 @@ Byte_t CapturarTeclaUTF8(
 /*----------------------------------------------------------------------------*/
 
 
+Byte_t CambiarCodPag_UTF8() {
+    REGISTRO_DE_ENTRADA_CodPag = GetConsoleCP();
+    if (REGISTRO_DE_ENTRADA_CodPag == 0)
+        return CambiarCodPag_UTF8_Error_GetConsoleCP_Entrada;
+    REGISTRO_DE_SALIDA_CodPag = GetConsoleOutputCP();
+    if (REGISTRO_DE_SALIDA_CodPag == 0)
+        return CambiarCodPag_UTF8_Error_GetConsoleOutputCP_Salida;
+    
+    if (SetConsoleCP(CP_UTF8) == FALSE)
+        return CambiarCodPag_UTF8_Error_SetConsoleCP_Entrada;
+    if (SetConsoleOutputCP(CP_UTF8) == FALSE) {
+        SetConsoleCP(REGISTRO_DE_ENTRADA_CodPag);
+        return CambiarCodPag_UTF8_Error_SetConsoleOutputCP_Salida;
+    }
+    return 0;
+}
+
+
+/*----------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
+
+
+Byte_t RestaurarCodPag() {
+    if (REGISTRO_DE_ENTRADA_CodPag == 0)
+        return RestaurarCodPag_Error_REGISTRO_ENTRADA;
+    if (REGISTRO_DE_SALIDA_CodPag == 0)
+        return RestaurarCodPag_Error_REGISTRO_SALIDA;
+    
+    if (SetConsoleCP(REGISTRO_DE_ENTRADA_CodPag) == FALSE) {
+        SetConsoleOutputCP(REGISTRO_DE_SALIDA_CodPag);
+        return RestaurarCodPag_Error_SetConsoleCP_Entrada;
+    }
+    if (SetConsoleOutputCP(REGISTRO_DE_SALIDA_CodPag) == FALSE)
+        return RestaurarCodPag_Error_SetConsoleOutputCP_Salida;
+    return 0;
+}
+
+
+/*----------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
+
+
 Byte_t LimpiarConsola(
     Byte_t CONSOLA_A_LIMPIAR
 ) {
@@ -1192,22 +1286,33 @@ Byte_t Entrada(
     if ((salida_antes = GetConsoleOutputCP()) == 0)
         return Entrada_Error_GetConsoleOutputCP;
     
-    if (SetConsoleCP(CP_UTF8) == FALSE)
+    if (SetConsoleCP(CP_UTF8) == FALSE) {
+        SetConsoleCP(entrada_antes);
         return Entrada_Error_SetConsoleCP;
-    if (SetConsoleOutputCP(CP_UTF8) == FALSE)
+    }
+    if (SetConsoleOutputCP(CP_UTF8) == FALSE) {
+        SetConsoleCP(entrada_antes);
+        SetConsoleOutputCP(salida_antes);
         return Entrada_Error_SetConsoleOutputCP;
+    }
 
     if (_CONFIGURACIONES_Y_PARAMETROS_ == NULL)
         return GENERAL_Error_Puntero_NULL;
     ///////////////////////////
 
-    if (dConfParams._PUNTERO_BUFFER_DE_ENTRADA_ == NULL)
+    if (dConfParams._PUNTERO_BUFFER_DE_ENTRADA_ == NULL) {
+        SetConsoleCP(entrada_antes);
+        SetConsoleOutputCP(salida_antes);
         return Entrada_Error_Puntero_BufferEntrada_NULL;
+    }
         
     char* buffer = dConfParams._PUNTERO_BUFFER_DE_ENTRADA_;
 
-    if (dConfParams._LONGITUD_DEL_BUFFER_ < 2)
+    if (dConfParams._LONGITUD_DEL_BUFFER_ < 2) {
+        SetConsoleCP(entrada_antes);
+        SetConsoleOutputCP(salida_antes);
         return Entrada_Error_LongitudBuffer_Menor_A_Dos;
+    }
         
     size_t longitud = dConfParams._LONGITUD_DEL_BUFFER_;
 
@@ -1251,8 +1356,11 @@ Byte_t Entrada(
             COMPROBACION_PARAMs parametros = {0};
             parametros.Campo_datos_de_entrada._LISTA_DE_TEXTO_C_ = mensaje_de_usuario;
             parametros.Campo_datos_de_entrada._LONGITUD_DE_LA_LISTA_ = dConfParams.Campo_Configuracion.Campo_Avanzados._LONGITUD_DE_LA_LISTA_;
-            if (ComprobarListaDeTexto(&parametros) != 0)
+            if (ComprobarListaDeTexto(&parametros) != 0) {
+                SetConsoleCP(entrada_antes);
+                SetConsoleOutputCP(salida_antes);
                 return Entrada_Error_Lista_De_Mensajes;
+            }
         }
 
         if (
@@ -1279,8 +1387,11 @@ Byte_t Entrada(
         size_t i = 0;
         if (mostrar_indicador) {
             while (1) {
-                if (LimpiarConsola(CONSOLA_OUTPUT) != 0)
+                if (LimpiarConsola(CONSOLA_OUTPUT) != 0) {
+                    SetConsoleCP(entrada_antes);
+                    SetConsoleOutputCP(salida_antes);
                     return Entrada_Error_LimpiarConsola;
+                }
                 
                 if (mostrar_mensaje) {
                     size_t iterador = 0;
@@ -1318,12 +1429,18 @@ Byte_t Entrada(
                 Imprimir("%s", (void*)buffer);
 
                 do {
-                    if (CapturarTeclaUTF8(&evento))
+                    if (CapturarTeclaUTF8(&evento) != 0) {
+                        SetConsoleCP(entrada_antes);
+                        SetConsoleOutputCP(salida_antes);
                         return Entrada_Error_CapturarTeclaUTF8;
+                    }
                         
                     if (usar_salida_especial) {
-                        if (evento.TIPO_DE_EVENTO == metodo)
+                        if (evento.TIPO_DE_EVENTO == metodo) {
+                            SetConsoleCP(entrada_antes);
+                            SetConsoleOutputCP(salida_antes);
                             return Entrada_ErrorNOFATAL_Salida_Por_Tecla_Especial;
+                        }
                     }
                 } while (
                     evento.TIPO_DE_EVENTO != TECLA_CARACTER  &&
@@ -1398,12 +1515,18 @@ Byte_t Entrada(
             while (1) {
                     
                 do {
-                    if (CapturarTeclaUTF8(&evento))
+                    if (CapturarTeclaUTF8(&evento) != 0) {
+                        SetConsoleCP(entrada_antes);
+                        SetConsoleOutputCP(salida_antes);
                         return Entrada_Error_CapturarTeclaUTF8;
+                    }
                         
                     if (usar_salida_especial) {
-                        if (evento.TIPO_DE_EVENTO == metodo)
+                        if (evento.TIPO_DE_EVENTO == metodo) {
+                            SetConsoleCP(entrada_antes);
+                            SetConsoleOutputCP(salida_antes);
                             return Entrada_ErrorNOFATAL_Salida_Por_Tecla_Especial;
+                        }
                     }
                 } while (
                     evento.TIPO_DE_EVENTO != TECLA_CARACTER  &&
@@ -1458,8 +1581,11 @@ Byte_t Entrada(
         while (1) {
 
             do {
-                if (CapturarTeclaUTF8(&evento))
+                if (CapturarTeclaUTF8(&evento) != 0) {
+                    SetConsoleCP(entrada_antes);
+                    SetConsoleOutputCP(salida_antes);
                     return Entrada_Error_CapturarTeclaUTF8;
+                }
             } while (
                 evento.TIPO_DE_EVENTO != TECLA_CARACTER  &&
                 evento.TIPO_DE_EVENTO != TECLA_ENTER     &&
@@ -1505,8 +1631,10 @@ Byte_t Entrada(
         } 
     } //>>>> >>>> >>>> >>>> aquí termina el ELSE <<<< <<<< <<<< <<<<//
     
-    if (SetConsoleCP(entrada_antes) == FALSE)
+    if (SetConsoleCP(entrada_antes) == FALSE) {
+        SetConsoleOutputCP(salida_antes);
         return Entrada_Error_SetConsoleCP;
+    }
     if (SetConsoleOutputCP(salida_antes) == FALSE)
         return Entrada_Error_SetConsoleOutputCP;
 
@@ -1588,9 +1716,9 @@ Sint_t Imprimir(
     Byte_t RetEscribir = 0;
 
     while (1) {
-        if (_TEXTO_C_[bytes] == 0x00) {  
+        if (_TEXTO_C_[bytes] == 0x00) 
             break;  
-        } else {
+        else {
             if (_TEXTO_C_[bytes] == '%') {
                 Bool_t exito = Si;
 
