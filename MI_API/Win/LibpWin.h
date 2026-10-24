@@ -1,21 +1,21 @@
 // LIBPWIN_H
 #ifndef LIBPWIN_H
- 
+
     #define LIBPWIN_H 2
     #include <stdint.h>
-     
+
     //=========================================================================
-    //definiciones 
-     
+    //definiciones
+
     #define WINDOWS_32BIT 0x10
     #define WINDOWS_64BIT 0x20
     #define WINDOWS_GNRAL 0x40
     #define LINUX         0xb0
-     
+
     #define _SIGNO_Y_MAGNITUD_ 0x01
     #define _COMPLEMENTO_UNO_  0x02
     #define _COMPLEMENTO_DOS_  0x03
-     
+
     #if defined(_WIN64)
         #define LEO_OS WINDOWS_64BIT
     #elif defined(_WIN32)
@@ -25,19 +25,19 @@
     #else
         #error "Entorno desconocido (solo LINUX y WINDOWS)"
     #endif
- 
+
     #define Verdadero  0x01  
     #define Falso      0x00  
-     
+
     #define Si Verdadero  
     #define No Falso  
-     
+
     typedef signed   int  Sint_t;
     typedef unsigned int  Uint_t;
     typedef unsigned char Byte_t;
     typedef unsigned char Bool_t;
-    typedef unsigned char BoolBit_t; 
-     
+    typedef unsigned char BoolBit_t;
+
     #define Si_BIT0 (0b00000001)
     #define Si_BIT1 (0b00000010)
     #define Si_BIT2 (0b00000100)
@@ -46,7 +46,7 @@
     #define Si_BIT5 (0b00100000)
     #define Si_BIT6 (0b01000000)
     #define Si_BIT7 (0b10000000)
- 
+
     #define No_BIT0 (~(0b00000001))
     #define No_BIT1 (~(0b00000010))
     #define No_BIT2 (~(0b00000100))
@@ -55,14 +55,14 @@
     #define No_BIT5 (~(0b00100000))
     #define No_BIT6 (~(0b01000000))
     #define No_BIT7 (~(0b10000000))
- 
+
     #define CONSOLA_OUTPUT 0x0f // 00001111
     #define CONSOLA_INPUT  0x3c // 00111100
     #define CONSOLA_ERROR  0xf0 // 11110000
-     
+
     #define IZQUIERDA  0x01
     #define DERECHA    0x02
- 
+
     #define TECLA_INDETERMINADA         0x00
     #define TECLA_CARACTER              0xff
     #define ALT_DE_PRESIONADO       0x01
@@ -111,7 +111,8 @@
     #define TECLA_F10           0x24
     #define TECLA_F11           0x25
     #define TECLA_F12           0x26
- 
+
+
     #define TECLA_F13           0x27
     #define TECLA_F14           0x28
     #define TECLA_F15           0x29
@@ -124,8 +125,8 @@
     #define TECLA_F22           0x30
     #define TECLA_F23           0x31
     #define TECLA_F24           0x32
- 
- 
+
+
     // Errores de funciones
     //======================================================================
     /* generales */
@@ -176,7 +177,7 @@
     #define RestaurarCodPag_Error_REGISTRO_SALIDA               0x04//
     //////////////////////////////////////////////////////////////////
 
-     
+
     // LimpiarConsola(...);
     ////////////////////////////////////////////////////////////////////////
     #define LimpiarConsola_Error_Parametro_Invalido                   0xff//
@@ -193,7 +194,8 @@
     #define LimpiarConsola_Error_FillConsoleAttribute_stdErr          0x50//
     #define LimpiarConsola_Error_SetCursor_stdErr                     0x60//
     ////////////////////////////////////////////////////////////////////////
-     
+
+
     // Entrada(...);
     //////////////////////////////////////////////////////////////
     #define Entrada_Error_Puntero_Estructura_NULL            0x01//
@@ -208,7 +210,8 @@
     #define Entrada_Error_SetConsoleCP                      0x09//
     #define Entrada_Error_SetConsoleOutputCP                0x0f//
     //////////////////////////////////////////////////////////////
-     
+
+
     //////////////////////////////////////////////////////////////////////
     #define Escribir_Error_Param_Invalido                           0x01//
     #define Escribir_Error_Puntero_NULL                             0x02//
@@ -216,7 +219,7 @@
     #define Escribir_Error_GetStdHandle                             0x03//
     #define Escribir_Error_WriteFile                                0x04//
     //////////////////////////////////////////////////////////////////////
-   
+
     //=========================================================================
 
     // funciones especificas:
@@ -231,7 +234,6 @@
     #define Especif_LimpiarConsola              0x08
     #define Especif_Entrada                     0x09
     #define Especif_Escribir                    0x0A
-
 //--
 //
 //
@@ -242,10 +244,19 @@
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 // estructuras y registros:
 
-   
+
     /*----------------------------------------------------------------------------*/
- 
-     
+
+
+    typedef struct _REGISTRO_COD_PAG {
+        Uint_t REGISTRO_COD_PAG_ENTRADA;
+        Uint_t REGISTRO_COD_PAG_SALIDA;
+    } REGISTRO_COD_PAG;
+
+
+    /*----------------------------------------------------------------------------*/
+
+
     typedef struct _EVENTO_TECLA {
         char _CARACTER_UNICODE_[4];
         Byte_t BYTES_ESCRITOS;
@@ -263,9 +274,11 @@
             BoolBit_t SCROLL_LOCK_ACTIVO;
         } Campo_Teclas_modificadoras;
     } EVENTO_TECLA;
- 
+
+
     /*----------------------------------------------------------------------------*/
- 
+
+
     typedef struct _ENTRADA_PARAMs {
         char*   _PUNTERO_BUFFER_DE_ENTRADA_;
         size_t  _LONGITUD_DEL_BUFFER_;
@@ -284,9 +297,11 @@
             } Campo_Avanzados;
         } Campo_Configuracion;
     } ENTRADA_PARAMs;
-     
+
+
     /*----------------------------------------------------------------------------*/
- 
+
+
     typedef struct _COMPROBACION_PARAMs {
         struct {
             const char* _LISTA_DE_TEXTO_C_;
@@ -299,7 +314,7 @@
     } COMPROBACION_PARAMs;
 
 
-       
+
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 //
@@ -317,7 +332,8 @@
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 // definiciones de funciones de esta API:
-     
+
+
     Byte_t SacarDirectorioActual(
         char*  __UBICACION_ACTUAL_DE_ESTE_ARCHIVO__entrada,
         char*  __UBICACION_MODIFICADA__resultado,
@@ -351,6 +367,8 @@
         Byte_t _FUNCION_ESPECIFICA_DEL_ERROR_
     );
     //=========================================================================
+    REGISTRO_COD_PAG LeerRegistrosCodPag();
+    //=========================================================================
     //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
     //=========================================================================
     Byte_t CapturarTeclaUTF8(
@@ -379,7 +397,8 @@
         const char* _TEXTO_C_,
         void* _PUNTERO_ARGUMENTO_O_NULL_
     );
-     
+
+
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 #endif
