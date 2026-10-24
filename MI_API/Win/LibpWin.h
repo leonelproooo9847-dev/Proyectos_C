@@ -17,11 +17,11 @@
     #define _COMPLEMENTO_DOS_  0x03
 
     #if defined(_WIN64)
-        #define LEO_OS WINDOWS_64BIT
+        #define Sistema_Operativo WINDOWS_64BIT
     #elif defined(_WIN32)
-        #define LEO_OS WINDOWS_32BIT
+        #define Sistema_Operativo WINDOWS_32BIT
     #elif defined(__linux__)
-        #define LEO_OS LINUX
+        #define Sistema_Operativo LINUX
     #else
         #error "Entorno desconocido (solo LINUX y WINDOWS)"
     #endif
@@ -166,15 +166,13 @@
 
     // CambiarCodPag_UTF8() y RestaurarCodPag()
     //////////////////////////////////////////////////////////////////
-    #define CambiarCodPag_UTF8_Error_SetConsoleCP_Entrada       0x01//
-    #define CambiarCodPag_UTF8_Error_SetConsoleOutputCP_Salida  0x02//
-    #define CambiarCodPag_UTF8_Error_GetConsoleCP_Entrada       0x03//
-    #define CambiarCodPag_UTF8_Error_GetConsoleOutputCP_Salida  0x04//
+    #define CambiarCodPagUTF8_Error_SetConsoleCP_Entrada        0x01//
+    #define CambiarCodPagUTF8_Error_SetConsoleOutputCP_Salida   0x02//
+    #define CambiarCodPagUTF8_Error_AmbasOperaciones            0x03//
     /****************************************************************/
     #define RestaurarCodPag_Error_SetConsoleCP_Entrada          0x01//
     #define RestaurarCodPag_Error_SetConsoleOutputCP_Salida     0x02//
-    #define RestaurarCodPag_Error_REGISTRO_ENTRADA              0x03//
-    #define RestaurarCodPag_Error_REGISTRO_SALIDA               0x04//
+    #define RestaurarCodPag_Error_AmbasOperaciones              0x03//
     //////////////////////////////////////////////////////////////////
 
 
@@ -243,15 +241,6 @@
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 // estructuras y registros:
-
-
-    /*----------------------------------------------------------------------------*/
-
-
-    typedef struct _REGISTRO_COD_PAG {
-        Uint_t REGISTRO_COD_PAG_ENTRADA;
-        Uint_t REGISTRO_COD_PAG_SALIDA;
-    } REGISTRO_COD_PAG;
 
 
     /*----------------------------------------------------------------------------*/
@@ -367,15 +356,13 @@
         Byte_t _FUNCION_ESPECIFICA_DEL_ERROR_
     );
     //=========================================================================
-    REGISTRO_COD_PAG LeerRegistrosCodPag();
-    //=========================================================================
     //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
     //=========================================================================
     Byte_t CapturarTeclaUTF8(
         EVENTO_TECLA* INFORMACION_DE_LA_TECLA
     );
     //=========================================================================
-    Byte_t CambiarCodPag_UTF8();
+    Byte_t CambiarCodPagUTF8();
     Byte_t RestaurarCodPag();
     //=========================================================================
     Byte_t LimpiarConsola(
