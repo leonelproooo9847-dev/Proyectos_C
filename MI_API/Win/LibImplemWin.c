@@ -7,8 +7,6 @@
 #include <windows.h>
 
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
-    Uint_t REGISTRO_DE_ENTRADA_CodPag = 0;
-    Uint_t REGISTRO_DE_SALIDA_CodPag  = 0;
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 //
 //
@@ -540,7 +538,7 @@ void ImprimirMensajeDeError(
                     case CapturarTeclaUTF8_Error_Lectura_De_Par_Suplente__Sin_KeyEvent:
                         Imprimir(
                             "CapturarTeclaUTF8 :\n\t"
-                            "Lectura de par suplente : Sin KeyEvent",
+                            "Lectura de par suplente :\n\tSin KeyEvent",
                             NULL
                         );
                     break;
@@ -548,7 +546,7 @@ void ImprimirMensajeDeError(
                     case CapturarTeclaUTF8_Error_Lectura_De_Par_Suplente__KeyDown_Falso:
                         Imprimir(
                             "CapturarTeclaUTF8 :\n\t"
-                            "Lectura de par suplente : KeyDown Falso",
+                            "Lectura de par suplente :\n\tKeyDown Falso",
                             NULL
                         );
                     break;
@@ -556,7 +554,7 @@ void ImprimirMensajeDeError(
                     case CapturarTeclaUTF8_Error_Lectura_De_Par_Suplente__Suplente_No_Correspondiente:
                         Imprimir(
                             "CapturarTeclaUTF8 :\n\t"
-                            "Lectura de par suplente : Suplente no correspondiente",
+                            "Lectura de par suplente :\n\tSuplente no correspondiente",
                             NULL
                         );
                     break;
@@ -574,39 +572,25 @@ void ImprimirMensajeDeError(
                 switch (*((Byte_t*)ptrRet)) {
                     case 1:
                         Imprimir(
-                            "Error API windows.h : SetConsoleCP",
+                            "Error API windows.h :\n\t\t"
+                            "SetConsoleCP",
                             NULL
                         );
                     break;
                     case 2:
                         Imprimir(
-                            "Error API windows.h : SetConsoleOutputCP",
+                            "Error API windows.h :\n\t\t"
+                            "SetConsoleOutputCP",
                             NULL
                         );
                     break;
                     case 3:
-                        if (Especif == Especif_CambiarCodPag_UTF8)
-                            Imprimir(
-                                "Error API windows.h : GetConsoleCP",
-                                NULL
-                            );
-                        else
-                            Imprimir(
-                                "El REGISTRO_DE_ENTRADA_CodPag es Cero",
-                                NULL
-                            );
-                    break;
-                    case 4:
-                        if (Especif == Especif_CambiarCodPag_UTF8)
-                            Imprimir(
-                                "Error API windows.h : GetConsoleOutputCP",
-                                NULL
-                            );
-                        else
-                            Imprimir(
-                                "El REGISTRO_DE_SALIDA_CodPag es Cero",
-                                NULL
-                            );  
+                        Imprimir(
+                            "Error API windows.h :\n\t\t"
+                            "SetConsoleCP\n\t\t"
+                            "SetConsoleOutputCP",
+                            NULL
+                        );
                     break;
                 }
             break;
@@ -867,6 +851,13 @@ void ImprimirMensajeDeError(
                     break;
                 }
             break;
+
+            default:
+                Imprimir(
+                    "NO_ESPECIFICO : NO_DATOS : %uint",
+                    _PUNTERO_DE_RETORNO_O_DE_CODIGO_DE_ERROR_
+                );
+            break;
         }
     }
 
@@ -874,17 +865,6 @@ void ImprimirMensajeDeError(
     #undef Especif
 }
 
-
-/*----------------------------------------------------------------------------*/
-/*----------------------------------------------------------------------------*/
-
-
-REGISTRO_COD_PAG LeerRegistrosCodPag() {
-    REGISTRO_COD_PAG reg = {0};
-    reg.REGISTRO_COD_PAG_ENTRADA = REGISTRO_DE_ENTRADA_CodPag;
-    reg.REGISTRO_COD_PAG_SALIDA  = REGISTRO_DE_SALIDA_CodPag;
-    return reg;
-}
 
 
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
@@ -1133,22 +1113,17 @@ Byte_t CapturarTeclaUTF8(
 /*----------------------------------------------------------------------------*/
 
 
-Byte_t CambiarCodPag_UTF8() {
-    REGISTRO_DE_ENTRADA_CodPag = GetConsoleCP();
-    if (REGISTRO_DE_ENTRADA_CodPag == 0)
-        return CambiarCodPag_UTF8_Error_GetConsoleCP_Entrada;
-    REGISTRO_DE_SALIDA_CodPag = GetConsoleOutputCP();
-    if (REGISTRO_DE_SALIDA_CodPag == 0) {
-        REGISTRO_DE_ENTRADA_CodPag = 0;
-        return CambiarCodPag_UTF8_Error_GetConsoleOutputCP_Salida;
+Byte_t CambiarCodPagUTF8() {
+    if (SetConsoleCP(CP_UTF8) == FALSE) {
+        return CambiarCodPagUTF8_Error_SetConsoleCP_Entrada;
+    }
+    if (SetConsoleOutputCP(CP_UTF8) == FALSE) {
+        if (SetConsoleCP(CP_OEMCP) == FALSE) {
+            return CambiarCodPagUTF8_Error_AmbasOperaciones;
+        }
+        return CambiarCodPagUTF8_Error_SetConsoleOutputCP_Salida;
     }
 
-    if (SetConsoleCP(CP_UTF8) == FALSE)
-        return CambiarCodPag_UTF8_Error_SetConsoleCP_Entrada;
-    if (SetConsoleOutputCP(CP_UTF8) == FALSE) {
-        SetConsoleCP(REGISTRO_DE_ENTRADA_CodPag);
-        return CambiarCodPag_UTF8_Error_SetConsoleOutputCP_Salida;
-    }
     return 0;
 }
 
@@ -1158,17 +1133,15 @@ Byte_t CambiarCodPag_UTF8() {
 
 
 Byte_t RestaurarCodPag() {
-    if (REGISTRO_DE_ENTRADA_CodPag == 0)
-        return RestaurarCodPag_Error_REGISTRO_ENTRADA;
-    if (REGISTRO_DE_SALIDA_CodPag == 0)
-        return RestaurarCodPag_Error_REGISTRO_SALIDA;
-
-    if (SetConsoleCP(REGISTRO_DE_ENTRADA_CodPag) == FALSE) {
-        SetConsoleOutputCP(REGISTRO_DE_SALIDA_CodPag);
+    if (SetConsoleCP(CP_OEMCP) == FALSE) {
+        if (SetConsoleOutputCP(CP_OEMCP) == FALSE) {
+            return RestaurarCodPag_Error_AmbasOperaciones;
+        }
         return RestaurarCodPag_Error_SetConsoleCP_Entrada;
     }
-    if (SetConsoleOutputCP(REGISTRO_DE_SALIDA_CodPag) == FALSE)
+    if (SetConsoleOutputCP(CP_OEMCP) == FALSE)
         return RestaurarCodPag_Error_SetConsoleOutputCP_Salida;
+    
     return 0;
 }
 
