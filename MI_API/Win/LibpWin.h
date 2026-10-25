@@ -1,4 +1,4 @@
-// LIBPWIN_H
+// LibpWin.h
 #ifndef LIBPWIN_H
 
     #define LIBPWIN_H 2
