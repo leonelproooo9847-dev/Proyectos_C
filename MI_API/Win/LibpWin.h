@@ -201,7 +201,7 @@
 
     // Entrada(...);
     //////////////////////////////////////////////////////////////
-    #define Entrada_Error_Puntero_Estructura_NULL            0x01//
+    #define Entrada_Error_Puntero_Estructura_NULL           0x01//
     #define Entrada_Error_Puntero_BufferEntrada_NULL        0x02//
     #define Entrada_Error_LongitudBuffer_Menor_A_Dos        0x03//
     #define Entrada_Error_Lista_De_Mensajes                 0x10//
@@ -240,7 +240,7 @@
     #define Especif_CopiarBuffer                0x03
     #define Especif_ComprobarListaDeTexto       0x04
     #define Especif_CapturarTeclaUTF8           0x05
-    #define Especif_CambiarCodPagUTF8          0x06
+    #define Especif_CambiarCodPagUTF8           0x06
     #define Especif_RestaurarCodPag             0x07
     #define Especif_LimpiarConsola              0x08
     #define Especif_Entrada                     0x09
