@@ -37,6 +37,7 @@
     typedef unsigned char Byte_t;
     typedef unsigned char Bool_t;
     typedef unsigned char BoolBit_t;
+    typedef void* MANEJADOR;
 
     #define Si_BIT0 (0b00000001)
     #define Si_BIT1 (0b00000010)
@@ -169,10 +170,14 @@
     #define CambiarCodPagUTF8_Error_SetConsoleCP_Entrada        0x01//
     #define CambiarCodPagUTF8_Error_SetConsoleOutputCP_Salida   0x02//
     #define CambiarCodPagUTF8_Error_AmbasOperaciones            0x03//
+    #define CambiarCodPagUTF8_Error_GetConsoleCP_Entrada        0x04//
+    #define CambiarCodPagUTF8_Error_GetConsoleOutputCP_Salida   0x05//
     /****************************************************************/
     #define RestaurarCodPag_Error_SetConsoleCP_Entrada          0x01//
     #define RestaurarCodPag_Error_SetConsoleOutputCP_Salida     0x02//
     #define RestaurarCodPag_Error_AmbasOperaciones              0x03//
+    #define RestaurarCodPag_Error_Registro_Entrada_Cero         0x04//
+    #define RestaurarCodPag_Error_Registro_Salida_Cero          0x05//
     //////////////////////////////////////////////////////////////////
 
 
@@ -218,6 +223,14 @@
     #define Escribir_Error_WriteFile                                0x04//
     //////////////////////////////////////////////////////////////////////
 
+    // CrearProceso(...);
+    //////////////////////////////////////////////////////////////////////////
+    #define CrearProceso_Error_Puntero_Estructura_NULL                  0x01//
+    #define CrearProceso_Error_Puntero_Ruta_Ejecutable_NULL             0x02//
+    #define CrearProceso_Error_NoImprimirEnEstaConsola_INVALID_HANDLE   0x03//
+    #define CrearProceso_Error_CreateProcessA                           0x04//
+    //////////////////////////////////////////////////////////////////////////
+
     //=========================================================================
 
     // funciones especificas:
@@ -227,11 +240,12 @@
     #define Especif_CopiarBuffer                0x03
     #define Especif_ComprobarListaDeTexto       0x04
     #define Especif_CapturarTeclaUTF8           0x05
-    #define Especif_CambiarCodPag_UTF8          0x06
+    #define Especif_CambiarCodPagUTF8          0x06
     #define Especif_RestaurarCodPag             0x07
     #define Especif_LimpiarConsola              0x08
     #define Especif_Entrada                     0x09
     #define Especif_Escribir                    0x0A
+    #define Especif_CrearProceso                0x0B
 //--
 //
 //
@@ -241,6 +255,15 @@
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 // estructuras y registros:
+
+
+    /*----------------------------------------------------------------------------*/
+
+
+    typedef struct _REGISTROS_CODIGO_DE_PAGINA {
+        Uint_t ENTRADA_CodPag;
+        Uint_t SALIDA_CodPag;
+    } REGISTROS_CODIGO_DE_PAGINA;
 
 
     /*----------------------------------------------------------------------------*/
@@ -363,7 +386,10 @@
     );
     //=========================================================================
     Byte_t CambiarCodPagUTF8();
-    Byte_t RestaurarCodPag();
+    Byte_t RestaurarCodPag(
+        Bool_t CONSULTAR_REGISTROS_O_PREDETERMINADO
+    );
+    REGISTROS_CODIGO_DE_PAGINA ConsultarRegistros();
     //=========================================================================
     Byte_t LimpiarConsola(
         Byte_t CONSOLA_A_LIMPIAR
