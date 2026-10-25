@@ -1,4 +1,4 @@
-// LibImplemWin_H
+// LibpWinImplem.c
 
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 // incluciones
@@ -7,6 +7,8 @@
 #include <windows.h>
 
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+    static Uint_t REGISTRO_ENTRADA_CodPag;
+    static Uint_t REGISTRO_SALIDA_CodPag;
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 //
 //
@@ -321,9 +323,10 @@ void ImprimirMensajeDeError(
     Byte_t _FUNCION_ESPECIFICA_DEL_ERROR_
 ) {
     #define ptrRet  (_PUNTERO_DE_RETORNO_O_DE_CODIGO_DE_ERROR_)
-    #define Especif (_FUNCION_ESPECIFICA_DEL_ERROR_)
+    #define ptrRetDes(TIPO_DESREFERENCIA)   (*((TIPO_DESREFERENCIA*)(_PUNTERO_DE_RETORNO_O_DE_CODIGO_DE_ERROR_)))
+    #define Especif_Funcion (_FUNCION_ESPECIFICA_DEL_ERROR_)
 
-    Imprimir("Error : ", NULL);
+    Escribir("Error : ", 8, NULL, CONSOLA_ERROR);
 
     if (_FUNCION_ESPECIFICA_DEL_ERROR_ == 0) {
         Imprimir(
@@ -331,27 +334,27 @@ void ImprimirMensajeDeError(
             _PUNTERO_DE_RETORNO_O_DE_CODIGO_DE_ERROR_
         );
     } else {
-        switch (Especif) {
+        switch (Especif_Funcion) {
 
             //==============================================================
             // SacarDirectorioActual
             //==============================================================
             case Especif_SacarDirectorioActual:
-                switch (*((Byte_t*)ptrRet)) {
+                switch (ptrRetDes(Byte_t)) {
 
                     case SacarDirectorioActual_Error_Punteros_NULLs:
-                        Imprimir(
+                        Escribir(
                             "SacarDirectorioActual :\n\t"
                             "Uno o ambos parametros punteros buffer a char es NULL",
-                            NULL
+                            78, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case SacarDirectorioActual_Error_Longitud_Corta:
-                        Imprimir(
+                        Escribir(
                             "SacarDirectorioActual :\n\t"
                             "Longitud corta del buffer de resultado",
-                            NULL
+                            63, NULL, CONSOLA_ERROR
                         );
                     break;
                 }
@@ -361,13 +364,13 @@ void ImprimirMensajeDeError(
             // LimpiarBuffer
             //==============================================================
             case Especif_LimpiarBuffer:
-                switch (*((Byte_t*)ptrRet)) {
+                switch (ptrRetDes(Byte_t)) {
 
                     case LimpiarBuffer_Error_Puntero_NULL:
-                        Imprimir(
+                        Escribir(
                             "LimpiarBuffer :\n\t"
                             "El parametro de puntero buffer Byte_t es NULL",
-                            NULL
+                            62, NULL, CONSOLA_ERROR
                         );
                     break;
                 }
@@ -377,45 +380,45 @@ void ImprimirMensajeDeError(
             // CopiarBuffer
             //==============================================================
             case Especif_CopiarBuffer:
-                switch (*((Byte_t*)ptrRet)) {
+                switch (ptrRetDes(Byte_t)) {
 
                     case CopiarBuffer_Error_Punteros_Buffers_NULLs:
-                        Imprimir(
+                        Escribir(
                             "CopiarBuffer :\n\t"
                             "Uno o ambos parametros de punteros buffer void es NULL",
-                            NULL
+                            70, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case CopiarBuffer_Error_Longitudes_Buffers_Cero:
-                        Imprimir(
+                        Escribir(
                             "CopiarBuffer :\n\t"
                             "Uno o ambos parametros de longitudes de buffers es cero",
-                            NULL
+                            71, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case CopiarBuffer_Error_Solapamiento_Buffers_Destino_Origen:
-                        Imprimir(
+                        Escribir(
                             "CopiarBuffer :\n\t"
                             "Hay solapamiento de memoria de los buffers Destino sobre Origen",
-                            NULL
+                            79, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case CopiarBuffer_Error_Solapamiento_Buffers_Origen_Destino:
-                        Imprimir(
+                        Escribir(
                             "CopiarBuffer :\n\t"
                             "Hay solapamiento de memoria de los buffers Origen sobre Destino",
-                            NULL
+                            79, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case CopiarBuffer_Error_Mismos_Punteros_Origen_Destino:
-                        Imprimir(
+                        Escribir(
                             "CopiarBuffer :\n\t"
                             "Ambos parametros de punteros buffer void son iguales",
-                            NULL
+                            68, NULL, CONSOLA_ERROR
                         );
                     break;
                 }
@@ -425,81 +428,81 @@ void ImprimirMensajeDeError(
             // ComprobarListaDeTexto
             //==============================================================
             case Especif_ComprobarListaDeTexto:
-                switch (*((Byte_t*)ptrRet)) {
+                switch (ptrRetDes(Byte_t)) {
 
                     case ComprobarListaDeTexto_Error_Estructura_NULL:
-                        Imprimir(
+                        Escribir(
                             "ComprobarListaDeTexto :\n\t"
                             "El parametro de puntero a COMPROBACION_PARAMs es NULL",
-                            NULL
+                            79, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case ComprobarListaDeTexto_Error_Longitud_Cero:
-                        Imprimir(
+                        Escribir(
                             "ComprobarListaDeTexto :\n\t"
                             "En el Campo_datos_de_entrada :\n\t\t"
                             "La longitud del buffer es cero",
-                            NULL
+                            88, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case ComprobarListaDeTexto_Error_Inicio_Con_Cero:
-                        Imprimir(
+                        Escribir(
                             "ComprobarListaDeTexto :\n\t"
                             "La lista de texto compienza con cero: \\000",
-                            NULL
+                            67, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case ComprobarListaDeTexto_Error_Etapa_No_Terminada_EXCEP1:
-                        Imprimir(
+                        Escribir(
                             "ComprobarListaDeTexto :\n\t"
                             "No se pudo analizar toda la estructura: Etapa en enum:NADA",
-                            NULL
+                            83, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case ComprobarListaDeTexto_Error_Etapa_No_Terminada_EXCEP2:
-                        Imprimir(
+                        Escribir(
                             "ComprobarListaDeTexto :\n\t"
                             "No se pudo analizar toda la estructura: Etapa en enum:TEXTO_C",
-                            NULL
+                            86, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case ComprobarListaDeTexto_Error_Etapa_No_Terminada_EXCEP3:
-                        Imprimir(
+                        Escribir(
                             "ComprobarListaDeTexto :\n\t"
                             "No se pudo analizar toda la estructura: Etapa en enum:CARACTER_CERO",
-                            NULL
+                            92, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case ComprobarListaDeTexto_Error_Puntero_De_Lista_De_Texto_C_NULL:
-                        Imprimir(
+                        Escribir(
                             "ComprobarListaDeTexto :\n\t"
                             "En el Campo_datos_de_entrada :\n\t\t"
                             "El puntero buffer char es NULL",
-                            NULL
+                            88, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case ComprobarListaDeTexto_Error_Cantidad_De_Sizes_Cero:
-                        Imprimir(
+                        Escribir(
                             "ComprobarListaDeTexto :\n\t"
                             "En el Campo_salida :\n\t\t"
                             "La cantidad de Sizes proporcionada es cero",
-                            NULL
+                            90, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case ComprobarListaDeTexto_Error_Lista_Sizes_Insuficientes:
-                        Imprimir(
+                        Escribir(
                             "ComprobarListaDeTexto :\n\t"
                             "En el Campo_datos_de_salida :\n\t\t"
                             "Hay menos Sizes que cantidad de elememtos en la lista",
-                            NULL
+                            111, NULL, CONSOLA_ERROR
                         );
                     break;
                 }
@@ -509,53 +512,53 @@ void ImprimirMensajeDeError(
             // CapturarTeclaUTF8
             //==============================================================
             case Especif_CapturarTeclaUTF8:
-                switch (*((Byte_t*)ptrRet)) {
+                switch (ptrRetDes(Byte_t)) {
 
                     case CapturarTeclaUTF8_Error_Puntero_NULL:
-                        Imprimir(
+                        Escribir(
                             "CapturarTeclaUTF8 :\n\t"
                             "El parametros de puntero de EVENTO_TECLA es NULL",
-                            NULL
+                            69, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case CapturarTeclaUTF8_Error_ReadConsoleInputW:
-                        Imprimir(
+                        Escribir(
                             "CapturarTeclaUTF8 :\n\t"
-                            "Error API windows.h : ReadConsoleInputW",
-                            NULL
+                            "Error API windows.h\n\t|       ReadConsoleInputW",
+                            67, NULL, CONSOLA_ERROR
                         );    
                     break;
 
                     case CapturarTeclaUTF8_Error_Escritos_Cero:
-                        Imprimir(
+                        Escribir(
                             "CapturarTeclaUTF8 :\n\t"
                             "La cantidad escrita de byte a _Caracter_UNICODE_ es cero",
-                            NULL
+                            77, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case CapturarTeclaUTF8_Error_Lectura_De_Par_Suplente__Sin_KeyEvent:
-                        Imprimir(
+                        Escribir(
                             "CapturarTeclaUTF8 :\n\t"
                             "Lectura de par suplente :\n\tSin KeyEvent",
-                            NULL
+                            60, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case CapturarTeclaUTF8_Error_Lectura_De_Par_Suplente__KeyDown_Falso:
-                        Imprimir(
+                        Escribir(
                             "CapturarTeclaUTF8 :\n\t"
                             "Lectura de par suplente :\n\tKeyDown Falso",
-                            NULL
+                            61, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case CapturarTeclaUTF8_Error_Lectura_De_Par_Suplente__Suplente_No_Correspondiente:
-                        Imprimir(
+                        Escribir(
                             "CapturarTeclaUTF8 :\n\t"
                             "Lectura de par suplente :\n\tSuplente no correspondiente",
-                            NULL
+                            75, NULL, CONSOLA_ERROR
                         );
                     break;
                 }
@@ -563,34 +566,65 @@ void ImprimirMensajeDeError(
             //==============================================================
             // CambiarCP_UTF8 y RestaurarCP
             //==============================================================
-            case Especif_CambiarCodPag_UTF8:
+            case Especif_CambiarCodPagUTF8:
             case Especif_RestaurarCodPag:
-                if (Especif == Especif_CambiarCodPag_UTF8)
-                    Imprimir("CambiarCodPag_UTF8 :\n\t", NULL);
+                if (Especif_Funcion == Especif_CambiarCodPagUTF8)
+                    Escribir("CambiarCodPag_UTF8 :\n\t", NULL, 22, CONSOLA_ERROR);
                 else
-                    Imprimir("RestaurarCodPag : \n\t", NULL);
-                switch (*((Byte_t*)ptrRet)) {
+                    Escribir("RestaurarCodPag : \n\t", NULL, 20, CONSOLA_ERROR);
+                switch (ptrRetDes(Byte_t)) {
                     case 1:
-                        Imprimir(
-                            "Error API windows.h :\n\t\t"
-                            "SetConsoleCP",
-                            NULL
+                        Escribir(
+                            "Error API windows.h\n\t"
+                            "|       SetConsoleCP",
+                            41, NULL, CONSOLA_ERROR
                         );
                     break;
                     case 2:
-                        Imprimir(
-                            "Error API windows.h :\n\t\t"
-                            "SetConsoleOutputCP",
-                            NULL
+                        Escribir(
+                            "Error API windows.h\n\t"
+                            "|       SetConsoleOutputCP",
+                            47,
+                            NULL,
+                            CONSOLA_ERROR
                         );
                     break;
                     case 3:
-                        Imprimir(
-                            "Error API windows.h :\n\t\t"
-                            "SetConsoleCP\n\t\t"
-                            "SetConsoleOutputCP",
-                            NULL
+                        Escribir(
+                            "Error API windows.h\n\t"
+                            "|       SetConsoleCP\n\t"
+                            "|       SetConsoleOutputCP",
+                            71,
+                            NULL,
+                            CONSOLA_ERROR
                         );
+                    break;
+                    case 4:
+                        if (Especif_Funcion == Especif_CambiarCodPagUTF8) {
+                            Escribir(
+                                "Error API windows.h\n\t"
+                                "|       GetConsoleCP",
+                                41, NULL, CONSOLA_ERROR
+                            );
+                        } else {
+                            Escribir(
+                                "El registro de codigo de pagina de entrada es cero",
+                                50, NULL, CONSOLA_ERROR
+                            );
+                        }
+                    case 5:
+                        if (Especif_Funcion == Especif_CambiarCodPagUTF8) {
+                            Escribir(
+                                "Error API windows.h\n\t"
+                                "|       GetConsoleOutputCP",
+                                47, NULL, CONSOLA_ERROR
+                            );
+                        } else {
+                            Escribir(
+                                "El registro de codigo de pagina en salida es cero",
+                                49, NULL, CONSOLA_ERROR
+                            );
+                        }
                     break;
                 }
             break;
@@ -598,111 +632,101 @@ void ImprimirMensajeDeError(
             // LimpiarConsola
             //==============================================================
             case Especif_LimpiarConsola:
-                switch (*((Byte_t*)ptrRet)) {
+                switch (ptrRetDes(Byte_t)) {
 
                     case LimpiarConsola_Error_Parametro_Invalido:
-                        Imprimir(
+                        Escribir(
                             "LimpiarConsola :\n\t"
                             "El parametro de especificacion de consola es invalido o incorrecto",
-                            NULL
-                        );
-                    break;
-
-                    case LimpiarConsola_Error_GetStdHandle_stdOut:
-                        Imprimir(
-                            "LimpiarConsola :\n\t"
-                            "Error API windows.h : GetStdHandle en stdOut",
-                            NULL
-                        );
-                    break;
-
-                    case LimpiarConsola_Error_GetStdHandle_stdErr:
-                        Imprimir(
-                            "LimpiarConsola :\n\t"
-                            "Error API windows.h : GetStdHandle en stdErr",
-                            NULL
+                            84, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case LimpiarConsola_Error_stdOut_Sin_Consola:
-                        Imprimir(
+                        Escribir(
                             "LimpiarConsola :\n\t"
                             "stdOut sin consola para limpiar",
-                            NULL
+                            49, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case LimpiarConsola_Error_stdErr_Sin_Consola:
-                        Imprimir(
+                        Escribir(
                             "LimpiarConsola :\n\t"
                             "stdErr sin consola para limpiar",
-                            NULL
+                            49, NULL, CONSOLA_ERROR
+                        );
+                    break;
+
+                    case LimpiarConsola_Error_GetStdHandle_stdOut:
+                    case LimpiarConsola_Error_GetStdHandle_stdErr:
+                        Escribir(
+                            "LimpiarConsola :\n\t"
+                            "Error API windows.h\n\t"
+                            "|       GetStdHandle",
+                            59, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case LimpiarConsola_Error_GetConsoleScreemBufferInfo_stdOut:
-                        Imprimir(
+                    case LimpiarConsola_Error_GetConsoleScreemBufferInfo_stdErr:
+                        Escribir(
                             "LimpiarConsola :\n\t"
-                            "Error API windows.h : GetConsoleScreemBufferInfo en stdOut",
-                            NULL
+                            "Error API windows.h\n\t"
+                            "|       GetConsoleScreemBufferInfo",
+                            73, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case LimpiarConsola_Error_FillConsoleCharacterA_stdOut:
-                        Imprimir(
+                    case LimpiarConsola_Error_FillConsoleCharacterA_stdErr:
+                        Escribir(
                             "LimpiarConsola :\n\t"
-                            "Error API windows.h : FillConsoleOutputCharacterA en stdOut",
-                            NULL
+                            "Error API windows.h\n\t"
+                            "|       FillConsoleOutputCharacterA",
+                            74, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case LimpiarConsola_Error_FillConsoleAttribute_stdOut:
-                        Imprimir(
+                    case LimpiarConsola_Error_FillConsoleAttribute_stdErr:
+                        Escribir(
                             "LimpiarConsola :\n\t"
-                            "Error API windows.h : FillConsoleOutputAttribute en stdOut",
-                            NULL
+                            "Error API windows.h\n\t"
+                            "|       FillConsoleOutputAttribute",
+                            73, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case LimpiarConsola_Error_SetCursor_stdOut:
-                        Imprimir(
-                            "LimpiarConsola :\n\t"
-                            "Error API windows.h : SetConsoleCursorPosition en stdOut",
-                            NULL
-                        );
-                    break;
-
-                    case LimpiarConsola_Error_GetConsoleScreemBufferInfo_stdErr:
-                        Imprimir(
-                            "LimpiarConsola :\n\t"
-                            "Error API windows.h : GetConsoleScreemBufferInfo en stdErr",
-                            NULL
-                        );
-                    break;
-
-                    case LimpiarConsola_Error_FillConsoleCharacterA_stdErr:
-                        Imprimir(
-                            "LimpiarConsola :\n\t"
-                            "Error API windows.h : FillConsoleOutputCharacterA en stdErr",
-                            NULL
-                        );
-                    break;
-
-                    case LimpiarConsola_Error_FillConsoleAttribute_stdErr:
-                        Imprimir(
-                            "LimpiarConsola :\n\t"
-                            "Error API windows.h : FillConsoleOutputAttribute en stdErr",
-                            NULL
-                        );
-                    break;
-
                     case LimpiarConsola_Error_SetCursor_stdErr:
-                        Imprimir(
+                        Escribir(
                             "LimpiarConsola :\n\t"
-                            "Error API windows.h : SetConsoleCursorPosition en stdErr",
-                            NULL
+                            "Error API windows.h\n\t"
+                            "|       SetConsoleCursorPosition",
+                            71, NULL, CONSOLA_ERROR
                         );
                     break;
+
+                }
+                if (
+                    (ptrRetDes(Byte_t) != LimpiarConsola_Error_Parametro_Invalido)  &&
+                    (ptrRetDes(Byte_t) != LimpiarConsola_Error_stdOut_Sin_Consola)  &&
+                    (ptrRetDes(Byte_t) != LimpiarConsola_Error_stdErr_Sin_Consola)
+                ) {
+                    if (!!(ptrRetDes(Byte_t)&0x0f)) {
+                        /*STDOUT*/
+                        Escribir(
+                            " en stdOut",
+                            10, NULL, CONSOLA_ERROR
+                        );
+                    } else {
+                        /*STDERR*/
+                        Escribir(
+                            " en stdErr",
+                            10, NULL, CONSOLA_ERROR
+                        );
+                    }
                 }
             break;
 
@@ -710,95 +734,99 @@ void ImprimirMensajeDeError(
             // Entrada
             //==============================================================
             case Especif_Entrada:
-                switch (*((Byte_t*)ptrRet)) {
+                switch (ptrRetDes(Byte_t)) {
 
                     case Entrada_Error_Puntero_Estructura_NULL:
-                        Imprimir(
+                        Escribir(
                             "Entrada :\n\t"
                             "El parametro de puntero ENTRADA_PARAMs es NULL",
-                            NULL
+                            57, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case Entrada_Error_Puntero_BufferEntrada_NULL:
-                        Imprimir(
+                        Escribir(
                             "Entrada :\n\t"
                             "En ENTRADA_PARAMs :\n\t\t"
                             "El puntero al buffer de entrada es NULL",
-                            NULL
+                            72, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case Entrada_Error_LongitudBuffer_Menor_A_Dos:
-                        Imprimir(
+                        Escribir(
                             "Entrada :\n\t"
                             "En ENTRADA_PARAMs :\n\t\t"
                             "La longitud del buffer proporcionada es menor a 2 bytes",
-                            NULL
+                            88, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case Entrada_Error_Lista_De_Mensajes:
-                        Imprimir(
+                        Escribir(
                             "Entrada :\n\t"
                             "La lista de mensajes proporcionada es invalida o incorrecta (ComprobarListaDeTexto)",
-                            NULL
+                            94, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case Entrada_Error_CapturarTeclaUTF8:
-                        Imprimir(
+                        Escribir(
                             "Entrada :\n\t"
                             "Error en CapturarTeclaUTF8",
-                            NULL
+                            37, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case Entrada_ErrorNOFATAL_Salida_Por_Tecla_Especial:
-                        Imprimir(
+                        Escribir(
                             "NOFATAL : Entrada :\n\t"
                             "Interrupcion por tecla especial",
-                            NULL
+                            53, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case Entrada_Error_LimpiarConsola:
-                        Imprimir(
+                        Escribir(
                             "Entrada :\n\t"
                             "Error en LimpiarConsola",
-                            NULL
+                            34, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case Entrada_Error_GetConsoleCP:
-                        Imprimir(
+                        Escribir(
                             "Entrada :\n\t"
-                            "Error API windows.h : GetConsoleCP",
-                            NULL
+                            "Error API windows.h\n\t"
+                            "|       GetConsoleCP",
+                            52, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case Entrada_Error_GetConsoleOutputCP:
-                        Imprimir(
+                        Escribir(
                             "Entrada :\n\t"
-                            "Error API windows.h : GetConsoleOutPutCP",
-                            NULL
+                            "Error API windows.h\n\t"
+                            "|       GetConsoleOutPutCP",
+                            58, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case Entrada_Error_SetConsoleCP:
-                        Imprimir(
+                        Escribir(
                             "Entrada :\n\t"
-                            "Error API windows.h : SetConsoleCP",
-                            NULL
+                            "Error API windows.h\n\t"
+                            "|       SetConsoleCP",
+                            52, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case Entrada_Error_SetConsoleOutputCP:
-                        Imprimir(
+                        Escribir(
                             "Entrada :\n\t"
-                            "Error API windows.h : SetConsoleOutputCP", 
-                            NULL
+                            "Error API windows.h\n\t"
+                            "|       SetConsoleOutputCP", 
+                            58, NULL, CONSOLA_ERROR
                         );
                     break;
                 }
@@ -808,45 +836,47 @@ void ImprimirMensajeDeError(
             // Escribir
             //==============================================================
             case Especif_Escribir:
-                switch (*((Byte_t*)ptrRet)) {
+                switch (ptrRetDes(Byte_t)) {
 
                     case Escribir_Error_Param_Invalido:
-                        Imprimir(
+                        Escribir(
                             "Escribir :\n\t"
                             "El parametro de especificacion de consola es invalido",
-                            NULL
+                            65, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case Escribir_Error_Puntero_NULL:
-                        Imprimir(
+                        Escribir(
                             "Escribir :\n\t"
                             "El parametro de puntero buffer const char es NULL",
-                            NULL
+                            61, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case Escribir_ErrorNOFATAL_Escritos_No_Iguales:
-                        Imprimir(
+                        Escribir(
                             "NOFATAL : Escribir :\n\t"
                             "La cantidad escritura realizada no es igual al proporcionado",
-                            NULL
+                            82, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case Escribir_Error_GetStdHandle:
-                        Imprimir(
+                        Escribir(
                             "Escribir :\n\t"
-                            "Error API windows.h : GetStdHandle",
-                            NULL
+                            "Error API windows.h\n\t"
+                            "|       GetStdHandle",
+                            53, NULL, CONSOLA_ERROR
                         );
                     break;
 
                     case Escribir_Error_WriteFile:
-                        Imprimir(
+                        Escribir(
                             "Escribir :\n\t"
-                            "Error API windows.h : WriteFile",
-                            NULL
+                            "Error API windows.h\n\t"
+                            "|       WriteFile",
+                            50, NULL, CONSOLA_ERROR
                         );
                     break;
                 }
@@ -862,6 +892,7 @@ void ImprimirMensajeDeError(
     }
 
     #undef ptrRet
+    #undef ptrRetDes
     #undef Especif
 }
 
@@ -1114,6 +1145,16 @@ Byte_t CapturarTeclaUTF8(
 
 
 Byte_t CambiarCodPagUTF8() {
+    REGISTRO_ENTRADA_CodPag = GetConsoleCP();
+
+    if (REGISTRO_ENTRADA_CodPag == 0)
+        return CambiarCodPagUTF8_Error_GetConsoleCP_Entrada;
+    
+    REGISTRO_SALIDA_CodPag  = GetConsoleOutputCP();
+
+    if (REGISTRO_SALIDA_CodPag == 0)
+        return CambiarCodPagUTF8_Error_GetConsoleOutputCP_Salida;
+
     if (SetConsoleCP(CP_UTF8) == FALSE) {
         return CambiarCodPagUTF8_Error_SetConsoleCP_Entrada;
     }
@@ -1123,7 +1164,7 @@ Byte_t CambiarCodPagUTF8() {
         }
         return CambiarCodPagUTF8_Error_SetConsoleOutputCP_Salida;
     }
-
+    
     return 0;
 }
 
@@ -1132,17 +1173,49 @@ Byte_t CambiarCodPagUTF8() {
 /*----------------------------------------------------------------------------*/
 
 
-Byte_t RestaurarCodPag() {
-    if (SetConsoleCP(CP_OEMCP) == FALSE) {
-        if (SetConsoleOutputCP(CP_OEMCP) == FALSE) {
-            return RestaurarCodPag_Error_AmbasOperaciones;
+Byte_t RestaurarCodPag(
+    Bool_t CONSULTAR_REGISTROS
+) {
+    if (CONSULTAR_REGISTROS == Si) {
+        if (REGISTRO_ENTRADA_CodPag == 0)
+            return RestaurarCodPag_Error_Registro_Entrada_Cero;
+        if (REGISTRO_SALIDA_CodPag == 0)
+            return RestaurarCodPag_Error_Registro_Salida_Cero;
+        
+        if (SetConsoleOutputCP(REGISTRO_SALIDA_CodPag) == FALSE)
+            return RestaurarCodPag_Error_SetConsoleOutputCP_Salida;
+        
+        if (SetConsoleCP(REGISTRO_ENTRADA_CodPag) == FALSE) {
+            if (SetConsoleOutputCP(CP_UTF8) == FALSE) {
+                return RestaurarCodPag_Error_AmbasOperaciones;
+            }
+            return RestaurarCodPag_Error_SetConsoleCP_Entrada;
         }
-        return RestaurarCodPag_Error_SetConsoleCP_Entrada;
+    } else {
+        if (SetConsoleOutputCP(CP_OEMCP) == FALSE)
+            return RestaurarCodPag_Error_SetConsoleOutputCP_Salida;
+        if (SetConsoleCP(CP_OEMCP) == FALSE) {
+            if (SetConsoleOutputCP(CP_UTF8) == FALSE) {
+                return RestaurarCodPag_Error_AmbasOperaciones;
+            }
+            return RestaurarCodPag_Error_SetConsoleCP_Entrada;
+        }
+        
     }
-    if (SetConsoleOutputCP(CP_OEMCP) == FALSE)
-        return RestaurarCodPag_Error_SetConsoleOutputCP_Salida;
     
     return 0;
+}
+
+
+/*----------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
+
+
+REGISTROS_CODIGO_DE_PAGINA ConsultarRegistros() {
+    REGISTROS_CODIGO_DE_PAGINA registros = {0};
+    registros.ENTRADA_CodPag = REGISTRO_ENTRADA_CodPag;
+    registros.SALIDA_CodPag  = REGISTRO_SALIDA_CodPag;
+    return registros;
 }
 
 
@@ -1622,11 +1695,11 @@ Byte_t Entrada(
     if (SetConsoleOutputCP(salida_antes) == FALSE)
         return Entrada_Error_SetConsoleOutputCP;
 
-    #undef dConfParams
     #undef BIT_0
     #undef BIT_1
     #undef BIT_2
     #undef BIT_3
+    #undef dConfParams
 
     return 0x00;
 }
