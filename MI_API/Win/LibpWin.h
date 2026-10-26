@@ -60,6 +60,16 @@
     #define CONSOLA_OUTPUT 0x0f // 00001111
     #define CONSOLA_INPUT  0x3c // 00111100
     #define CONSOLA_ERROR  0xf0 // 11110000
+    #define CONSOLA_OUTPUT_INPUT (CONSOLA_OUTPUT | CONSOLA_INPUT)
+
+    #define CodPag_ANSI_Predet      0x01
+    #define CodPag_OEM_Predet       0x02
+    #define CodPag_Macintosh        0x03
+    #define CodPag_ANSI_SubProceso  0x04
+    #define CodPag_Simbolos         0x05
+    #define CodPag_UTF7             0x06
+    #define CodPag_UTF8             0x07
+    #define CodPag_INDETERMINADO    0xff
 
     #define IZQUIERDA  0x01
     #define DERECHA    0x02
@@ -165,20 +175,15 @@
     #define CapturarTeclaUTF8_Error_Lectura_De_Par_Suplente__Suplente_No_Correspondiente     0x07//
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    // CambiarCodPag_UTF8() y RestaurarCodPag()
-    //////////////////////////////////////////////////////////////////
-    #define CambiarCodPagUTF8_Error_SetConsoleCP_Entrada        0x01//
-    #define CambiarCodPagUTF8_Error_SetConsoleOutputCP_Salida   0x02//
-    #define CambiarCodPagUTF8_Error_AmbasOperaciones            0x03//
-    #define CambiarCodPagUTF8_Error_GetConsoleCP_Entrada        0x04//
-    #define CambiarCodPagUTF8_Error_GetConsoleOutputCP_Salida   0x05//
-    /****************************************************************/
-    #define RestaurarCodPag_Error_SetConsoleCP_Entrada          0x01//
-    #define RestaurarCodPag_Error_SetConsoleOutputCP_Salida     0x02//
-    #define RestaurarCodPag_Error_AmbasOperaciones              0x03//
-    #define RestaurarCodPag_Error_Registro_Entrada_Cero         0x04//
-    #define RestaurarCodPag_Error_Registro_Salida_Cero          0x05//
-    //////////////////////////////////////////////////////////////////
+    // CambiarCodigoDePagina()
+    //////////////////////////////////////////////////////////////////////////////////
+    #define CambiarCodigoDePagina_Error_Parametro_CodPag_Invalido               0x7f//
+    #define CambiarCodigoDePagina_Error_Parametro_Consola_Invalido              0xff//
+    #define CambiarCodigoDePagina_Error_CONSOLA_OUTPUT_SetConsoleOutputCP       0x01//
+    #define CambiarCodigoDePagina_Error_CONSOLA_INPUT_SetConsoleCP              0x02//
+    #define CambiarCodigoDePagina_Error_CONSOLA_OUTPUT_INPUT_SetConsoleOutputCP 0x04//
+    #define CambiarCodigoDePagina_Error_CONSOLA_OUTPUT_INPUT_SetConsoleCP       0x08//
+    //////////////////////////////////////////////////////////////////////////////////
 
 
     // LimpiarConsola(...);
@@ -243,12 +248,11 @@
     #define Especif_CopiarBuffer                0x03
     #define Especif_ComprobarListaDeTexto       0x04
     #define Especif_CapturarTeclaUTF8           0x05
-    #define Especif_CambiarCodPagUTF8           0x06
-    #define Especif_RestaurarCodPag             0x07
-    #define Especif_LimpiarConsola              0x08
-    #define Especif_Entrada                     0x09
-    #define Especif_Escribir                    0x0A
-    #define Especif_CrearProceso                0x0B
+    #define Especif_CambiarCodigoDePagina       0x06
+    #define Especif_LimpiarConsola              0x07
+    #define Especif_Entrada                     0x08
+    #define Especif_Escribir                    0x09
+    #define Especif_CrearProceso                0x0A
 //--
 //
 //
@@ -258,15 +262,6 @@
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 // estructuras y registros:
-
-
-    /*----------------------------------------------------------------------------*/
-
-
-    typedef struct _REGISTROS_CODIGO_DE_PAGINA {
-        Uint_t ENTRADA_CodPag;
-        Uint_t SALIDA_CodPag;
-    } REGISTROS_CODIGO_DE_PAGINA;
 
 
     /*----------------------------------------------------------------------------*/
@@ -388,11 +383,10 @@
         EVENTO_TECLA* INFORMACION_DE_LA_TECLA
     );
     //=========================================================================
-    Byte_t CambiarCodPagUTF8();
-    Byte_t RestaurarCodPag(
-        Bool_t CONSULTAR_REGISTROS_O_PREDETERMINADO
+    Byte_t CambiarCodigoDePagina(
+        Byte_t _CODIGO_DE_PAGINA_,
+        Byte_t _CONSOLA_A_CAMBIAR_
     );
-    REGISTROS_CODIGO_DE_PAGINA ConsultarRegistros();
     //=========================================================================
     Byte_t LimpiarConsola(
         Byte_t CONSOLA_A_LIMPIAR
