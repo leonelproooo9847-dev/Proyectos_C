@@ -6,9 +6,17 @@
 #include "LibpWin.h"
 #include <windows.h>
 
+/*
+CP_ACP	        0	    Página de códigos ANSI predeterminada de Windows.
+CP_OEMCP	    1	    Página de códigos OEM predeterminada.
+CP_MACCP	    2	    Página de códigos de Macintosh, para compatibilidad heredada.
+CP_THREAD_ACP	3	    Página ANSI predeterminada asociada al subproceso actual.
+CP_SYMBOL	    42	    Página de códigos de símbolos.
+CP_UTF7	        65000	Codificación UTF-7, heredada y desaconsejada para usos nuevos.
+CP_UTF8
+*/
+
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
-    static Uint_t REGISTRO_ENTRADA_CodPag;
-    static Uint_t REGISTRO_SALIDA_CodPag;
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 //
 //
@@ -541,7 +549,7 @@ void ImprimirMensajeDeError(
                     case CapturarTeclaUTF8_Error_Lectura_De_Par_Suplente__Sin_KeyEvent:
                         Escribir(
                             "CapturarTeclaUTF8 :\n\t"
-                            "Lectura de par suplente :\n\tSin KeyEvent",
+                            "Lectura de par suplente :\n\t\tSin KeyEvent",
                             60, NULL, CONSOLA_ERROR
                         );
                     break;
@@ -549,7 +557,7 @@ void ImprimirMensajeDeError(
                     case CapturarTeclaUTF8_Error_Lectura_De_Par_Suplente__KeyDown_Falso:
                         Escribir(
                             "CapturarTeclaUTF8 :\n\t"
-                            "Lectura de par suplente :\n\tKeyDown Falso",
+                            "Lectura de par suplente :\n\t\tKeyDown Falso",
                             61, NULL, CONSOLA_ERROR
                         );
                     break;
@@ -557,74 +565,73 @@ void ImprimirMensajeDeError(
                     case CapturarTeclaUTF8_Error_Lectura_De_Par_Suplente__Suplente_No_Correspondiente:
                         Escribir(
                             "CapturarTeclaUTF8 :\n\t"
-                            "Lectura de par suplente :\n\tSuplente no correspondiente",
+                            "Lectura de par suplente :\n\t\tSuplente no correspondiente",
                             75, NULL, CONSOLA_ERROR
                         );
                     break;
                 }
             break;
             //==============================================================
-            // CambiarCP_UTF8 y RestaurarCP
+            // CambiarCodigoDePagina
             //==============================================================
-            case Especif_CambiarCodPagUTF8:
-            case Especif_RestaurarCodPag:
-                if (Especif_Funcion == Especif_CambiarCodPagUTF8)
-                    Escribir("CambiarCodPag_UTF8 :\n\t", NULL, 22, CONSOLA_ERROR);
-                else
-                    Escribir("RestaurarCodPag : \n\t", NULL, 20, CONSOLA_ERROR);
+            case Especif_CambiarCodigoDePagina:
+                Escribir(
+                    "CambiarCodigoDePagina :\n\t",
+                    25, NULL, CONSOLA_ERROR
+                );
                 switch (ptrRetDes(Byte_t)) {
-                    case 1:
+                    case CambiarCodigoDePagina_Error_Parametro_CodPag_Invalido:
                         Escribir(
-                            "Error API windows.h\n\t"
+                            "El codigo de pagina seleccionado no es reconocido",
+                            49, NULL, CONSOLA_ERROR
+                        );
+                    break;
+
+                    case CambiarCodigoDePagina_Error_Parametro_Consola_Invalido:
+                        Escribir(
+                            "La consola seleccionada no es reconocida",
+                            40, NULL, CONSOLA_ERROR
+                        );
+                    break;
+
+                    case CambiarCodigoDePagina_Error_CONSOLA_OUTPUT_SetConsoleOutputCP:
+                        Escribir(
+                            "En Consola Output :\n\t\t"
+                            "Error API windows.h\n\t\t"
+                            "|       SetConsoleOutputCP",
+                            70, NULL, CONSOLA_ERROR
+                        );
+                    break;
+
+                    case CambiarCodigoDePagina_Error_CONSOLA_INPUT_SetConsoleCP:
+                        Escribir(
+                            "En Consola Input :\n\t\t"
+                            "Error API windows.h\n\t\t"
                             "|       SetConsoleCP",
-                            41, NULL, CONSOLA_ERROR
+                            63, NULL, CONSOLA_ERROR
                         );
                     break;
-                    case 2:
+
+                    case CambiarCodigoDePagina_Error_CONSOLA_OUTPUT_INPUT_SetConsoleOutputCP:
+                    case CambiarCodigoDePagina_Error_CONSOLA_OUTPUT_INPUT_SetConsoleCP:
                         Escribir(
-                            "Error API windows.h\n\t"
-                            "|       SetConsoleOutputCP",
-                            47,
-                            NULL,
-                            CONSOLA_ERROR
+                            "En Consola Output y Input :\n\t\t"
+                            "Error API windows.h\n\t\t",
+                            52, NULL, CONSOLA_ERROR
                         );
-                    break;
-                    case 3:
+                        Escribir ("|       SetConsoleOutputCP: ", 28, NULL, CONSOLA_ERROR);
+                        if (ptrRetDes(Byte_t) == CambiarCodigoDePagina_Error_CONSOLA_OUTPUT_INPUT_SetConsoleOutputCP) {
+                            Escribir("ERR", 3, NULL, CONSOLA_ERROR);
+                            break;
+                        } else Escribir("OK\n\t\t", 5, NULL, CONSOLA_ERROR);
+
                         Escribir(
-                            "Error API windows.h\n\t"
-                            "|       SetConsoleCP\n\t"
-                            "|       SetConsoleOutputCP",
-                            71,
-                            NULL,
-                            CONSOLA_ERROR
+                            "|       SetConsoleCP: ERR\n\t\t"
+                            "Estado de consola incompleto.\n\t\t"
+                            "Falta configurar CONSOLA_INPUT.", 
+                            91, NULL, CONSOLA_ERROR
                         );
-                    break;
-                    case 4:
-                        if (Especif_Funcion == Especif_CambiarCodPagUTF8) {
-                            Escribir(
-                                "Error API windows.h\n\t"
-                                "|       GetConsoleCP",
-                                41, NULL, CONSOLA_ERROR
-                            );
-                        } else {
-                            Escribir(
-                                "El registro de codigo de pagina de entrada es cero",
-                                50, NULL, CONSOLA_ERROR
-                            );
-                        }
-                    case 5:
-                        if (Especif_Funcion == Especif_CambiarCodPagUTF8) {
-                            Escribir(
-                                "Error API windows.h\n\t"
-                                "|       GetConsoleOutputCP",
-                                47, NULL, CONSOLA_ERROR
-                            );
-                        } else {
-                            Escribir(
-                                "El registro de codigo de pagina en salida es cero",
-                                49, NULL, CONSOLA_ERROR
-                            );
-                        }
+                    
                     break;
                 }
             break;
@@ -1172,78 +1179,41 @@ Byte_t CapturarTeclaUTF8(
 /*----------------------------------------------------------------------------*/
 
 
-Byte_t CambiarCodPagUTF8() {
-    REGISTRO_ENTRADA_CodPag = GetConsoleCP();
-
-    if (REGISTRO_ENTRADA_CodPag == 0)
-        return CambiarCodPagUTF8_Error_GetConsoleCP_Entrada;
-    
-    REGISTRO_SALIDA_CodPag  = GetConsoleOutputCP();
-
-    if (REGISTRO_SALIDA_CodPag == 0)
-        return CambiarCodPagUTF8_Error_GetConsoleOutputCP_Salida;
-
-    if (SetConsoleCP(CP_UTF8) == FALSE) {
-        return CambiarCodPagUTF8_Error_SetConsoleCP_Entrada;
-    }
-    if (SetConsoleOutputCP(CP_UTF8) == FALSE) {
-        if (SetConsoleCP(CP_OEMCP) == FALSE) {
-            return CambiarCodPagUTF8_Error_AmbasOperaciones;
-        }
-        return CambiarCodPagUTF8_Error_SetConsoleOutputCP_Salida;
-    }
-    
-    return 0;
-}
-
-
-/*----------------------------------------------------------------------------*/
-/*----------------------------------------------------------------------------*/
-
-
-Byte_t RestaurarCodPag(
-    Bool_t CONSULTAR_REGISTROS
+Byte_t CambiarCodigoDePagina(
+    Byte_t _CODIGO_DE_PAGINA_,
+    Byte_t _CONSOLA_A_CAMBIAR_
 ) {
-    if (CONSULTAR_REGISTROS == Si) {
-        if (REGISTRO_ENTRADA_CodPag == 0)
-            return RestaurarCodPag_Error_Registro_Entrada_Cero;
-        if (REGISTRO_SALIDA_CodPag == 0)
-            return RestaurarCodPag_Error_Registro_Salida_Cero;
-        
-        if (SetConsoleOutputCP(REGISTRO_SALIDA_CodPag) == FALSE)
-            return RestaurarCodPag_Error_SetConsoleOutputCP_Salida;
-        
-        if (SetConsoleCP(REGISTRO_ENTRADA_CodPag) == FALSE) {
-            if (SetConsoleOutputCP(CP_UTF8) == FALSE) {
-                return RestaurarCodPag_Error_AmbasOperaciones;
-            }
-            return RestaurarCodPag_Error_SetConsoleCP_Entrada;
-        }
-    } else {
-        if (SetConsoleOutputCP(CP_OEMCP) == FALSE)
-            return RestaurarCodPag_Error_SetConsoleOutputCP_Salida;
-        if (SetConsoleCP(CP_OEMCP) == FALSE) {
-            if (SetConsoleOutputCP(CP_UTF8) == FALSE) {
-                return RestaurarCodPag_Error_AmbasOperaciones;
-            }
-            return RestaurarCodPag_Error_SetConsoleCP_Entrada;
-        }
-        
+    UINT CodPag = 0;
+
+    switch (_CODIGO_DE_PAGINA_)
+    {
+        case CodPag_ANSI_SubProceso : CodPag = CP_THREAD_ACP;   break;
+        case CodPag_ANSI_Predet     : CodPag = CP_ACP;          break;
+        case CodPag_OEM_Predet      : CodPag = CP_OEMCP;        break;
+        case CodPag_Macintosh       : CodPag = CP_MACCP;        break;
+        case CodPag_Simbolos        : CodPag = CP_SYMBOL;       break;
+        case CodPag_UTF7            : CodPag = CP_UTF7;         break;
+        case CodPag_UTF8            : CodPag = CP_UTF8;         break;
+
+        default:
+            return CambiarCodigoDePagina_Error_Parametro_CodPag_Invalido;
     }
+
+    if (_CONSOLA_A_CAMBIAR_ == CONSOLA_OUTPUT) {
+        if (SetConsoleOutputCP(CodPag) == FALSE)
+            return CambiarCodigoDePagina_Error_CONSOLA_OUTPUT_SetConsoleOutputCP;
+    } else if (_CONSOLA_A_CAMBIAR_ == CONSOLA_INPUT) {
+        if (SetConsoleCP(CodPag) == FALSE)
+            return CambiarCodigoDePagina_Error_CONSOLA_INPUT_SetConsoleCP;
+    } else if (_CONSOLA_A_CAMBIAR_ == CONSOLA_OUTPUT_INPUT) {
+        if (SetConsoleOutputCP(CodPag) == FALSE)
+            return CambiarCodigoDePagina_Error_CONSOLA_OUTPUT_INPUT_SetConsoleOutputCP;
+        if (SetConsoleCP(CodPag) == FALSE)
+            return CambiarCodigoDePagina_Error_CONSOLA_OUTPUT_INPUT_SetConsoleCP;
+    } else
+        return CambiarCodigoDePagina_Error_Parametro_Consola_Invalido;
     
     return 0;
-}
-
-
-/*----------------------------------------------------------------------------*/
-/*----------------------------------------------------------------------------*/
-
-
-REGISTROS_CODIGO_DE_PAGINA ConsultarRegistros() {
-    REGISTROS_CODIGO_DE_PAGINA registros = {0};
-    registros.ENTRADA_CodPag = REGISTRO_ENTRADA_CodPag;
-    registros.SALIDA_CodPag  = REGISTRO_SALIDA_CodPag;
-    return registros;
 }
 
 
