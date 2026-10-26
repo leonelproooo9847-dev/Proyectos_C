@@ -658,6 +658,31 @@ void ImprimirMensajeDeError(
                         );
                     break;
 
+                    case LimpiarConsola_Error_GetStdHandle_stdIn:
+                        Escribir(
+                            "LimpiarConsola :\n\t"
+                            "Error API windows.h\n\t"
+                            "|       GetStdHandle en stdIn",
+                            68, NULL, CONSOLA_ERROR
+                        );
+                    break;
+
+                    case LimpiarConsola_Error_stdIn_Sin_Consola:
+                        Escribir(
+                            "LimpiarConsola :\n\t"
+                            "stdIn sin consola para limpiar",
+                            48, NULL, CONSOLA_ERROR
+                        );
+                    break;
+
+                    case LimpiarConsola_Error_FlushConsoleInputBuffer_stdIn:
+                        Escribir(
+                            "Error API windows.h\n\t"
+                            "|       FlushConsoleInputBuffer en stdIn",
+                            52, NULL, CONSOLA_ERROR
+                        );
+                    break;
+
                     case LimpiarConsola_Error_GetStdHandle_stdOut:
                     case LimpiarConsola_Error_GetStdHandle_stdErr:
                         Escribir(
@@ -712,7 +737,10 @@ void ImprimirMensajeDeError(
                 if (
                     (ptrRetDes(Byte_t) != LimpiarConsola_Error_Parametro_Invalido)  &&
                     (ptrRetDes(Byte_t) != LimpiarConsola_Error_stdOut_Sin_Consola)  &&
-                    (ptrRetDes(Byte_t) != LimpiarConsola_Error_stdErr_Sin_Consola)
+                    (ptrRetDes(Byte_t) != LimpiarConsola_Error_stdErr_Sin_Consola)  &&
+                    (ptrRetDes(Byte_t) != LimpiarConsola_Error_GetStdHandle_stdIn)  &&
+                    (ptrRetDes(Byte_t) != LimpiarConsola_Error_stdIn_Sin_Consola)   &&
+                    (ptrRetDes(Byte_t) != LimpiarConsola_Error_FlushConsoleInputBuffer_stdIn)
                 ) {
                     if (!!(ptrRetDes(Byte_t)&0x0f)) {
                         /*STDOUT*/
@@ -1227,10 +1255,26 @@ Byte_t LimpiarConsola(
     Byte_t CONSOLA_A_LIMPIAR
 ) {
     //implementacio de Windows
-    HANDLE Salida_Estandar = NULL;
-    HANDLE Error_Estandar  = NULL;
+    HANDLE Entrada_Estandar = NULL;
+    HANDLE Salida_Estandar  = NULL;
+    HANDLE Error_Estandar   = NULL;
 
-    if (CONSOLA_A_LIMPIAR == CONSOLA_OUTPUT) {
+    if (CONSOLA_A_LIMPIAR == CONSOLA_INPUT) {
+        Entrada_Estandar = GetStdHandle(STD_INPUT_HANDLE);
+        if (
+            Entrada_Estandar == INVALID_HANDLE_VALUE ||
+            Entrada_Estandar == NULL
+        ) return LimpiarConsola_Error_GetStdHandle_stdIn;
+        {
+            DWORD modo = 0;
+            if (GetConsoleMode(Entrada_Estandar, &modo) == FALSE)
+                return LimpiarConsola_Error_stdIn_Sin_Consola;
+        }
+
+        if (FlushConsoleInputBuffer(Entrada_Estandar) == FALSE)
+            return LimpiarConsola_Error_FlushConsoleInputBuffer_stdIn;
+        
+    } else if (CONSOLA_A_LIMPIAR == CONSOLA_OUTPUT) {
         Salida_Estandar = GetStdHandle(STD_OUTPUT_HANDLE);
         if (
             Salida_Estandar == INVALID_HANDLE_VALUE ||
