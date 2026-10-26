@@ -123,7 +123,6 @@
     #define TECLA_F11           0x25
     #define TECLA_F12           0x26
 
-
     #define TECLA_F13           0x27
     #define TECLA_F14           0x28
     #define TECLA_F15           0x29
@@ -231,14 +230,6 @@
     #define Escribir_Error_WriteFile                                0x04//
     //////////////////////////////////////////////////////////////////////
 
-    // CrearProceso(...);
-    //////////////////////////////////////////////////////////////////////////
-    #define CrearProceso_Error_Puntero_Estructura_NULL                  0x01//
-    #define CrearProceso_Error_Puntero_Ruta_Ejecutable_NULL             0x02//
-    #define CrearProceso_Error_NoImprimirEnEstaConsola_INVALID_HANDLE   0x03//
-    #define CrearProceso_Error_CreateProcessA                           0x04//
-    //////////////////////////////////////////////////////////////////////////
-
     //=========================================================================
 
     // funciones especificas:
@@ -252,7 +243,6 @@
     #define Especif_LimpiarConsola              0x07
     #define Especif_Entrada                     0x08
     #define Especif_Escribir                    0x09
-    #define Especif_CrearProceso                0x0A
 //--
 //
 //
