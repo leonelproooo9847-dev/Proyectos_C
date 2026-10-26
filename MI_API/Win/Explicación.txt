@@ -1,1 +1,4 @@
-para entender el lore de five night at freddy- quiero decir, para entender las funciones que se ve en la Implementación de LibpWinImplem.c, este archivo ofrecerá una guía de su función, su utilidad y su comportamiento.
+para entender el lore de five night at freddy- quiero decir,
+para entender las funciones que se ve en la Implementación de
+LibpWinImplem.c, este archivo ofrecerá una guía de su función,
+su utilidad y su comportamiento.
