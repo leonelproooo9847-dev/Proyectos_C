@@ -464,27 +464,27 @@ void ImprimirMensajeDeError(
                     break;
 
                     case ComprobarListaDeTexto_Error_Etapa_No_Terminada_EXCEP1:
-                        Escribir(
-                            "ComprobarListaDeTexto :\n\t"
-                            "No se pudo analizar toda la estructura: Etapa en enum:NADA",
-                            83, NULL, CONSOLA_ERROR
-                        );
-                    break;
-
                     case ComprobarListaDeTexto_Error_Etapa_No_Terminada_EXCEP2:
-                        Escribir(
-                            "ComprobarListaDeTexto :\n\t"
-                            "No se pudo analizar toda la estructura: Etapa en enum:TEXTO_C",
-                            86, NULL, CONSOLA_ERROR
-                        );
-                    break;
-
                     case ComprobarListaDeTexto_Error_Etapa_No_Terminada_EXCEP3:
                         Escribir(
                             "ComprobarListaDeTexto :\n\t"
-                            "No se pudo analizar toda la estructura: Etapa en enum:CARACTER_CERO",
+                            "No se pudo analizar toda la estructura :\n\t\t"
+                            "Etapa en enum\n\t\t|       ",
                             92, NULL, CONSOLA_ERROR
                         );
+                        if (ptrRetDes(Byte_t) == ComprobarListaDeTexto_Error_Etapa_No_Terminada_EXCEP1) {
+                            Escribir(
+                                "NADA", 4, NULL, CONSOLA_ERROR
+                            );
+                        } else if (ptrRetDes(Byte_t) == ComprobarListaDeTexto_Error_Etapa_No_Terminada_EXCEP2) {
+                            Escribir(
+                                "TEXTO_C", 7, NULL, CONSOLA_ERROR
+                            );
+                        } else {
+                            Escribir(
+                                "CARACTER_CERO", 13, NULL, CONSOLA_ERROR
+                            );
+                        }
                     break;
 
                     case ComprobarListaDeTexto_Error_Puntero_De_Lista_De_Texto_C_NULL:
@@ -499,9 +499,9 @@ void ImprimirMensajeDeError(
                     case ComprobarListaDeTexto_Error_Cantidad_De_Sizes_Cero:
                         Escribir(
                             "ComprobarListaDeTexto :\n\t"
-                            "En el Campo_salida :\n\t\t"
+                            "En el Campo_datos_de_salida :\n\t\t"
                             "La cantidad de Sizes proporcionada es cero",
-                            90, NULL, CONSOLA_ERROR
+                            99, NULL, CONSOLA_ERROR
                         );
                     break;
 
@@ -509,7 +509,7 @@ void ImprimirMensajeDeError(
                         Escribir(
                             "ComprobarListaDeTexto :\n\t"
                             "En el Campo_datos_de_salida :\n\t\t"
-                            "Hay menos Sizes que cantidad de elememtos en la lista",
+                            "Hay menos Sizes que cantidad de elementos en la lista",
                             111, NULL, CONSOLA_ERROR
                         );
                     break;
@@ -525,8 +525,8 @@ void ImprimirMensajeDeError(
                     case CapturarTeclaUTF8_Error_Puntero_NULL:
                         Escribir(
                             "CapturarTeclaUTF8 :\n\t"
-                            "El parametros de puntero de EVENTO_TECLA es NULL",
-                            69, NULL, CONSOLA_ERROR
+                            "El parametro de puntero de EVENTO_TECLA es NULL",
+                            68, NULL, CONSOLA_ERROR
                         );
                     break;
 
@@ -550,7 +550,7 @@ void ImprimirMensajeDeError(
                         Escribir(
                             "CapturarTeclaUTF8 :\n\t"
                             "Lectura de par suplente :\n\t\tSin KeyEvent",
-                            60, NULL, CONSOLA_ERROR
+                            61, NULL, CONSOLA_ERROR
                         );
                     break;
 
@@ -558,7 +558,7 @@ void ImprimirMensajeDeError(
                         Escribir(
                             "CapturarTeclaUTF8 :\n\t"
                             "Lectura de par suplente :\n\t\tKeyDown Falso",
-                            61, NULL, CONSOLA_ERROR
+                            62, NULL, CONSOLA_ERROR
                         );
                     break;
 
@@ -566,7 +566,7 @@ void ImprimirMensajeDeError(
                         Escribir(
                             "CapturarTeclaUTF8 :\n\t"
                             "Lectura de par suplente :\n\t\tSuplente no correspondiente",
-                            75, NULL, CONSOLA_ERROR
+                            76, NULL, CONSOLA_ERROR
                         );
                     break;
                 }
@@ -684,9 +684,10 @@ void ImprimirMensajeDeError(
 
                     case LimpiarConsola_Error_FlushConsoleInputBuffer_stdIn:
                         Escribir(
+                            "LimpiarConsola :\n\t"
                             "Error API windows.h\n\t"
                             "|       FlushConsoleInputBuffer en stdIn",
-                            52, NULL, CONSOLA_ERROR
+                            79, NULL, CONSOLA_ERROR
                         );
                     break;
 
@@ -842,7 +843,7 @@ void ImprimirMensajeDeError(
                         Escribir(
                             "Entrada :\n\t"
                             "Error API windows.h\n\t"
-                            "|       GetConsoleOutPutCP",
+                            "|       GetConsoleOutputCP",
                             58, NULL, CONSOLA_ERROR
                         );
                     break;
@@ -892,8 +893,8 @@ void ImprimirMensajeDeError(
                     case Escribir_ErrorNOFATAL_Escritos_No_Iguales:
                         Escribir(
                             "NOFATAL : Escribir :\n\t"
-                            "La cantidad escritura realizada no es igual al proporcionado",
-                            82, NULL, CONSOLA_ERROR
+                            "La cantidad de escritura realizada no es igual al proporcionado",
+                            85, NULL, CONSOLA_ERROR
                         );
                     break;
 
