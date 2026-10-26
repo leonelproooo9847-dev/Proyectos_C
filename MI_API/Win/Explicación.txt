@@ -2,3 +2,12 @@ para entender el lore de five night at freddy- quiero decir,
 para entender las funciones que se ve en la Implementación de
 LibpWinImplem.c, este archivo ofrecerá una guía de su función,
 su utilidad y su comportamiento.
+
+Es importante aclarar que, si es que ya ha visto la implantación,
+todo está en español. En cierto sentido, eso limita su alcance,
+pero justamente, mi objetivo es que un hispanohablante fanático
+de C como yo pueda comprender,
+leer y lograr tocar partes del sistema operativo para lograrlo
+sin necesidad de tener que leer cosas como CreateProcess,
+ReadConsoleInputA, GetConsoleMode, FillConsoleOutputCharacterA,
+entre otros.
