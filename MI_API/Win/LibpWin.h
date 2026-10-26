@@ -1,4 +1,4 @@
-// LibpWin.h
+// LIBPWIN_H
 #ifndef LIBPWIN_H
 
     #define LIBPWIN_H 2
@@ -186,6 +186,9 @@
     #define LimpiarConsola_Error_Parametro_Invalido                   0xff//
     #define LimpiarConsola_Error_GetStdHandle_stdOut                  0x01//
     #define LimpiarConsola_Error_GetStdHandle_stdErr                  0x10//
+    #define LimpiarConsola_Error_GetStdHandle_stdIn                   0xf1//
+    #define LimpiarConsola_Error_stdIn_Sin_Consola                    0xf2//
+    #define LimpiarConsola_Error_FlushConsoleInputBuffer_stdIn        0xf3//
     #define LimpiarConsola_Error_stdOut_Sin_Consola                   0x02//
     #define LimpiarConsola_Error_stdErr_Sin_Consola                   0x20//
     #define LimpiarConsola_Error_GetConsoleScreemBufferInfo_stdOut    0x03//
