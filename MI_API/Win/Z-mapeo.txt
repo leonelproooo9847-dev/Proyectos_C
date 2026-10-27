@@ -1,0 +1,31 @@
+dos grandes definiciones importantes usadas aquí:
+        DefErrorWin.h
+        GeneralCab.h
+
+mapa:
+        LibpWin.h
+        |-      <stdint.h>
+        |-      GeneralCab.h
+        |-      DefErrorWin.h
+        |
+        LibpWinImplem.c
+        |-      <windows.h>
+        |-      LibpWin.h
+
+        =========================
+
+        LibProcesosWin.h
+        |-      GeneralCab.h
+        LibProcesosWinI.c
+        |-      <windows.h>
+        |-      LibProcesosWin.h
+
+        =========================
+
+        MensajeErrorWin.h
+        |-      GeneralCab.h
+        |-      DefErrorWin-h
+        MensajeErrorWinI.c
+        |-      MensajeErrorWin.h
+        |-      <stddef.h>
+        |-      <windows.h>
