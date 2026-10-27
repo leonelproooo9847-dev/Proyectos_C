@@ -31,7 +31,6 @@
     typedef unsigned char Byte_t;
     typedef unsigned char Bool_t;
     typedef unsigned char BoolBit_t;
-    typedef void* MANEJADOR;
 
     #define Si_BIT0 (0b00000001)
     #define Si_BIT1 (0b00000010)
