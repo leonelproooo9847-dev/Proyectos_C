@@ -3,64 +3,11 @@
 
     #define LIBPWIN_H 2
     #include <stdint.h>
+    #include "GeneralCab.h"
+    #include "DefErrorWin.h"
 
     //=========================================================================
     //definiciones
-
-    #define WINDOWS_32BIT 0x10
-    #define WINDOWS_64BIT 0x20
-    #define WINDOWS_GNRAL 0x40
-    #define LINUX         0xb0
-
-    #define _SIGNO_Y_MAGNITUD_ 0x01
-    #define _COMPLEMENTO_UNO_  0x02
-    #define _COMPLEMENTO_DOS_  0x03
-
-    #if defined(_WIN64)
-        #define Sistema_Operativo WINDOWS_64BIT
-    #elif defined(_WIN32)
-        #define Sistema_Operativo WINDOWS_32BIT
-    #elif defined(__linux__)
-        #define Sistema_Operativo LINUX
-    #else
-        #error "Entorno desconocido (solo LINUX y WINDOWS)"
-    #endif
-
-    #define Verdadero  0x01  
-    #define Falso      0x00  
-
-    #define Si Verdadero  
-    #define No Falso  
-
-    typedef signed   int  Sint_t;
-    typedef unsigned int  Uint_t;
-    typedef unsigned char Byte_t;
-    typedef unsigned char Bool_t;
-    typedef unsigned char BoolBit_t;
-    typedef void* MANEJADOR;
-
-    #define Si_BIT0 (0b00000001)
-    #define Si_BIT1 (0b00000010)
-    #define Si_BIT2 (0b00000100)
-    #define Si_BIT3 (0b00001000)
-    #define Si_BIT4 (0b00010000)
-    #define Si_BIT5 (0b00100000)
-    #define Si_BIT6 (0b01000000)
-    #define Si_BIT7 (0b10000000)
-
-    #define No_BIT0 (~(0b00000001))
-    #define No_BIT1 (~(0b00000010))
-    #define No_BIT2 (~(0b00000100))
-    #define No_BIT3 (~(0b00001000))
-    #define No_BIT4 (~(0b00010000))
-    #define No_BIT5 (~(0b00100000))
-    #define No_BIT6 (~(0b01000000))
-    #define No_BIT7 (~(0b10000000))
-
-    #define CONSOLA_OUTPUT 0x0f // 00001111
-    #define CONSOLA_INPUT  0x3c // 00111100
-    #define CONSOLA_ERROR  0xf0 // 11110000
-    #define CONSOLA_OUTPUT_INPUT (CONSOLA_OUTPUT | CONSOLA_INPUT)
 
     #define CodPag_ANSI_Predet      0x01
     #define CodPag_OEM_Predet       0x02
@@ -135,114 +82,6 @@
     #define TECLA_F22           0x30
     #define TECLA_F23           0x31
     #define TECLA_F24           0x32
-
-
-    // Errores de funciones
-    //======================================================================
-    /* generales */
-    #define GENERAL_Error_Puntero_NULL                      0x01
-    //======================================================================
-    /* funciones portables */
-    #define SacarDirectorioActual_Error_Punteros_NULLs      0x01
-    #define SacarDirectorioActual_Error_Longitud_Corta      0x02
-    ////////////////////////////////////////////////////////////////////////
-    #define LimpiarBuffer_Error_Puntero_NULL                0x01
-    ////////////////////////////////////////////////////////////////////////
-    #define CopiarBuffer_Error_Punteros_Buffers_NULLs               0x01
-    #define CopiarBuffer_Error_Longitudes_Buffers_Cero              0x02
-    #define CopiarBuffer_Error_Solapamiento_Buffers_Destino_Origen  0x03
-    #define CopiarBuffer_Error_Solapamiento_Buffers_Origen_Destino  0x04
-    #define CopiarBuffer_Error_Mismos_Punteros_Origen_Destino       0x05
-    ////////////////////////////////////////////////////////////////////////
-    #define ComprobarListaDeTexto_Error_Longitud_Cero                       0x01
-    #define ComprobarListaDeTexto_Error_Inicio_Con_Cero                     0x02
-    #define ComprobarListaDeTexto_Error_Etapa_No_Terminada_EXCEP1           0x03
-    #define ComprobarListaDeTexto_Error_Etapa_No_Terminada_EXCEP2           0x04
-    #define ComprobarListaDeTexto_Error_Etapa_No_Terminada_EXCEP3           0x05
-    #define ComprobarListaDeTexto_Error_Estructura_NULL                     0x06
-    #define ComprobarListaDeTexto_Error_Puntero_De_Lista_De_Texto_C_NULL    0x07
-    #define ComprobarListaDeTexto_Error_Cantidad_De_Sizes_Cero              0x08
-    #define ComprobarListaDeTexto_Error_Lista_Sizes_Insuficientes           0x09
-    //======================================================================
-    // CapturarTeclaUTF8(...);
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    #define CapturarTeclaUTF8_Error_Puntero_NULL                                             0x01//
-    #define CapturarTeclaUTF8_Error_Escritos_Cero                                            0x03//
-    #define CapturarTeclaUTF8_Error_ReadConsoleInputW                                        0x02//
-    #define CapturarTeclaUTF8_Error_Lectura_De_Par_Suplente__Sin_KeyEvent                    0x05//
-    #define CapturarTeclaUTF8_Error_Lectura_De_Par_Suplente__KeyDown_Falso                   0x06//
-    #define CapturarTeclaUTF8_Error_Lectura_De_Par_Suplente__Suplente_No_Correspondiente     0x07//
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    // CambiarCodigoDePagina()
-    //////////////////////////////////////////////////////////////////////////////////
-    #define CambiarCodigoDePagina_Error_Parametro_CodPag_Invalido               0x7f//
-    #define CambiarCodigoDePagina_Error_Parametro_Consola_Invalido              0xff//
-    #define CambiarCodigoDePagina_Error_CONSOLA_OUTPUT_SetConsoleOutputCP       0x01//
-    #define CambiarCodigoDePagina_Error_CONSOLA_INPUT_SetConsoleCP              0x02//
-    #define CambiarCodigoDePagina_Error_CONSOLA_OUTPUT_INPUT_SetConsoleOutputCP 0x04//
-    #define CambiarCodigoDePagina_Error_CONSOLA_OUTPUT_INPUT_SetConsoleCP       0x08//
-    //////////////////////////////////////////////////////////////////////////////////
-
-
-    // LimpiarConsola(...);
-    ////////////////////////////////////////////////////////////////////////
-    #define LimpiarConsola_Error_Parametro_Invalido                   0xff//
-    #define LimpiarConsola_Error_GetStdHandle_stdOut                  0x01//
-    #define LimpiarConsola_Error_GetStdHandle_stdErr                  0x10//
-    #define LimpiarConsola_Error_GetStdHandle_stdIn                   0xf1//
-    #define LimpiarConsola_Error_stdIn_Sin_Consola                    0xf2//
-    #define LimpiarConsola_Error_FlushConsoleInputBuffer_stdIn        0xf3//
-    #define LimpiarConsola_Error_stdOut_Sin_Consola                   0x02//
-    #define LimpiarConsola_Error_stdErr_Sin_Consola                   0x20//
-    #define LimpiarConsola_Error_GetConsoleScreemBufferInfo_stdOut    0x03//
-    #define LimpiarConsola_Error_FillConsoleCharacterA_stdOut         0x04//
-    #define LimpiarConsola_Error_FillConsoleAttribute_stdOut          0x05//
-    #define LimpiarConsola_Error_SetCursor_stdOut                     0x06//
-    #define LimpiarConsola_Error_GetConsoleScreemBufferInfo_stdErr    0x30//
-    #define LimpiarConsola_Error_FillConsoleCharacterA_stdErr         0x40//
-    #define LimpiarConsola_Error_FillConsoleAttribute_stdErr          0x50//
-    #define LimpiarConsola_Error_SetCursor_stdErr                     0x60//
-    ////////////////////////////////////////////////////////////////////////
-
-
-    // Entrada(...);
-    //////////////////////////////////////////////////////////////
-    #define Entrada_Error_Puntero_Estructura_NULL           0x01//
-    #define Entrada_Error_Puntero_BufferEntrada_NULL        0x02//
-    #define Entrada_Error_LongitudBuffer_Menor_A_Dos        0x03//
-    #define Entrada_Error_Lista_De_Mensajes                 0x10//
-    #define Entrada_Error_CapturarTeclaUTF8                 0x04//
-    #define Entrada_ErrorNOFATAL_Salida_Por_Tecla_Especial  0x05//
-    #define Entrada_Error_LimpiarConsola                    0x06//
-    #define Entrada_Error_GetConsoleCP                      0x07//
-    #define Entrada_Error_GetConsoleOutputCP                0x08//
-    #define Entrada_Error_SetConsoleCP                      0x09//
-    #define Entrada_Error_SetConsoleOutputCP                0x0f//
-    //////////////////////////////////////////////////////////////
-
-
-    //////////////////////////////////////////////////////////////////////
-    #define Escribir_Error_Param_Invalido                           0x01//
-    #define Escribir_Error_Puntero_NULL                             0x02//
-    #define Escribir_ErrorNOFATAL_Escritos_No_Iguales               0x05//
-    #define Escribir_Error_GetStdHandle                             0x03//
-    #define Escribir_Error_WriteFile                                0x04//
-    //////////////////////////////////////////////////////////////////////
-
-    //=========================================================================
-
-    // funciones especificas:
-    //=========================================================================
-    #define Especif_SacarDirectorioActual       0x01
-    #define Especif_LimpiarBuffer               0x02
-    #define Especif_CopiarBuffer                0x03
-    #define Especif_ComprobarListaDeTexto       0x04
-    #define Especif_CapturarTeclaUTF8           0x05
-    #define Especif_CambiarCodigoDePagina       0x06
-    #define Especif_LimpiarConsola              0x07
-    #define Especif_Entrada                     0x08
-    #define Especif_Escribir                    0x09
 //--
 //
 //
@@ -360,11 +199,6 @@
     //=========================================================================
     void ImprimirTipoTecla(
         Byte_t TECLA_ESPECIAL_A_IMPRIMIR
-    );
-    //=========================================================================
-    void ImprimirMensajeDeError(
-        void*  _PUNTERO_DE_RETORNO_O_DE_CODIGO_DE_ERROR_,
-        Byte_t _FUNCION_ESPECIFICA_DEL_ERROR_
     );
     //=========================================================================
     //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
