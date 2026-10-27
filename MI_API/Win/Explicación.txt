@@ -1,13 +1,35 @@
-para entender el lore de five night at freddy- quiero decir,
-para entender las funciones que se ve en la Implementación de
+Para entender las funciones que se ve en la Implementación de
 LibpWinImplem.c, este archivo ofrecerá una guía de su función,
 su utilidad y su comportamiento.
 
 Es importante aclarar que, si es que ya ha visto la implantación,
 todo está en español. En cierto sentido, eso limita su alcance,
-pero justamente, mi objetivo es que un hispanohablante fanático
-de C como yo pueda comprender,
+pero justamente, mi objetivo es que un hispanohablante fanático de C como yo pueda comprender,
 leer y lograr tocar partes del sistema operativo para lograrlo
 sin necesidad de tener que leer cosas como CreateProcess,
 ReadConsoleInputA, GetConsoleMode, FillConsoleOutputCharacterA,
 entre otros.
+
+LibpWinI (Lib premium Windows Implementación):
+
+    Aquí podemos encontrar funciones tanto portables
+    entre entornos, como especifica del entorno Windows.
+    Empezamos por las portables:
+
+        SacarDirectorioActual():
+        Sus parametro son:
+        -   __UBICACION_ACTUAL_DE_ESTE_ARCHIVO__entrada de tipo char pointer
+        -   __UBICACION_MODIFICADA__resultado de tipo char pointer 
+        -   __LONGITUD_DEL_BUFFER_DE_RESULTADO__ de tipo Size_t
+        - __DEJAR_BARRA_INVERTIDA__ de tipo Bool_t
+
+        Su objetivo es tomar los argumentos de
+        main, específicamente de argument vector (argv) y
+        sacar, mediante la dirección del cual se ejecutó,
+        el archivo, su directorio actual, pudiendo también,
+        decidir si dejar la última barra o no.
+
+        Su retorno es de tipo Byte_t (unsigned char) y puede retornar estos valores:
+        - SacarDirectorioActual_Error_Punteros_NULLs
+        - SacarDirectorioActual_Error_Longitud_Corta
+
