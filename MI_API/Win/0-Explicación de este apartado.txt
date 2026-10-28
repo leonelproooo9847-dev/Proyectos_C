@@ -11,7 +11,7 @@ necesidad de tener que leer cosas como CreateProcess,
 ReadConsoleInputA, GetConsoleMode, FillConsoleOutputCharacterA,
 entre otros.
 
-LibpWinI (Lib premium Windows Implementación):
+LibpWinI (Librería predeterminada en Windows Implementación):
 
     Aquí podemos encontrar funciones tanto portables
     entre entornos, como especifica del entorno Windows.
