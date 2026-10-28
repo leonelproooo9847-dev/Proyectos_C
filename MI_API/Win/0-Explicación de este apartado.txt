@@ -22,15 +22,31 @@ LibpWinI (Librería predeterminada en Windows Implementación):
         -   __UBICACION_ACTUAL_DE_ESTE_ARCHIVO__entrada de tipo char pointer
         -   __UBICACION_MODIFICADA__resultado de tipo char pointer 
         -   __LONGITUD_DEL_BUFFER_DE_RESULTADO__ de tipo Size_t
-        -   __DEJAR_BARRA_INVERTIDA__ de tipo Bool_t
+        -   __DEJAR_BARRA_INVERTIDA__ de tipo Bool_t (GeneralCab.h)
 
         Su objetivo es tomar los argumentos de
         main, específicamente de argument vector (argv) y
-        sacar, mediante la dirección del cual se ejecutó,
-        el archivo, su directorio actual, pudiendo también,
+        sacar, mediante el índice argv[0],
+        su directorio actual, pudiendo también,
         decidir si dejar la última barra o no.
 
         Su retorno es de tipo Byte_t (unsigned char) y puede retornar estos valores:
-        - SacarDirectorioActual_Error_Punteros_NULLs
-        - SacarDirectorioActual_Error_Longitud_Corta
+        - SacarDirectorioActual_Error_Punteros_NULLs (DefErrorWin.h)
+        - SacarDirectorioActual_Error_Longitud_Corta (DefErrorWin.h)
 
+        la función empieza comprobano ambos pointer char
+        si una de ellas es NULL, retorna SacarDirectorioActual_Error_Punteros_NULLs (0x01), luego
+        saca la longitud del argv[0] y compara si la
+        longitud de argv[0] sea igual o mayor a la longitud
+        proporcionada en el parámetro __LONGITUD_DEL_BUFFER_DE_RESULTADO__
+        si lo es, devuelve SacarDirectorioActual_Error_Longitud_Corta (0x02)
+
+        a partir de aquí, si paso las validaciones
+        correspondientes, la operacion sigue con normalidad,
+        copia argv[0] en el buffer proporcionado en el
+        parámetro __UBICACION_MODIFICADA__resultado
+        luego, desde el último índice, retrocede colocando 0x00
+        a los demás byte hasta encontrar '/' o '\\' y,
+        dependiendo de la decisión tomada en el parámetro
+        __DEJAR_BARRA_INVERTIDA__, borra la barra o lo deja.
+        el retorno será 0 (exitoso).
