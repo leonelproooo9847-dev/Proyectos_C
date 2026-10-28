@@ -16,6 +16,9 @@ mapa:
 
         LibProcesosWin.h
         |-      GeneralCab.h
+        |-      DefErrorWin.h
+        |-      <stdint.h>
+        |
         LibProcesosWinI.c
         |-      <windows.h>
         |-      LibProcesosWin.h
@@ -25,6 +28,7 @@ mapa:
         MensajeErrorWin.h
         |-      GeneralCab.h
         |-      DefErrorWin-h
+        |
         MensajeErrorWinI.c
         |-      MensajeErrorWin.h
         |-      <stddef.h>
