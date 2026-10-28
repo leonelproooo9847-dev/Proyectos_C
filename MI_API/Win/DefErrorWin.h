@@ -1,5 +1,5 @@
 #ifndef DEF_ERROR_WIN_H
-    #define DEF_ERROR_WIN_H 6
+    #define DEF_ERROR_WIN_H "V: 1.1 | NumCab: 4"
 
     // Errores definiciones
     //======================================================================
@@ -85,7 +85,7 @@
     #define Entrada_Error_SetConsoleOutputCP                0x0f//
     //////////////////////////////////////////////////////////////
 
-
+    // Escribir(...)
     //////////////////////////////////////////////////////////////////////
     #define Escribir_Error_Param_Invalido                           0x01//
     #define Escribir_Error_Puntero_NULL                             0x02//
@@ -93,6 +93,13 @@
     #define Escribir_Error_GetStdHandle                             0x03//
     #define Escribir_Error_WriteFile                                0x04//
     //////////////////////////////////////////////////////////////////////
+
+    // CrearProceso(...)
+    //
+    #define CrearProceso_Error_Estructura_Parametros_NULL       0x01
+    #define CrearProceso_Error_Estructura_Informacion_NULL      0x02
+    #define CrearProceso_Error_Direccion_NULL                   0x03
+    //
 
     //=========================================================================
 
@@ -107,5 +114,6 @@
     #define Especif_LimpiarConsola              0x07
     #define Especif_Entrada                     0x08
     #define Especif_Escribir                    0x09
+    #define Especif_CrearProceso                0x0A
 
 #endif
