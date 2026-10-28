@@ -67,7 +67,10 @@ Byte_t SacarDirectorioActual(
     }
 
     while (i_r != 0) {
-        if (__UBICACION_MODIFICADA__resultado[i_r] == '\\') {
+        if (
+            __UBICACION_MODIFICADA__resultado[i_r] == '\\' ||
+            __UBICACION_MODIFICADA__resultado[i_r] == '/'
+        ) {
             if (__DEJAR_BARRA_INVERTIDA__ == No)
                 __UBICACION_MODIFICADA__resultado[i_r] = 0x00;
 
@@ -176,12 +179,21 @@ Byte_t ComprobarListaDeTexto(
     #define dParams (*PARAMETROS)
     if (PARAMETROS == NULL)
         return ComprobarListaDeTexto_Error_Estructura_NULL;
+    
     if (dParams.Campo_datos_de_entrada._LISTA_DE_TEXTO_C_ == NULL)
         return ComprobarListaDeTexto_Error_Puntero_De_Lista_De_Texto_C_NULL;
+    
     if (dParams.Campo_datos_de_entrada._LONGITUD_DE_LA_LISTA_ == 0)
         return ComprobarListaDeTexto_Error_Longitud_Cero;
+    
 
-    Bool_t Guardar_cantidad = Si;
+    const char* lista_de_texto_c    = dParams.Campo_datos_de_entrada._LISTA_DE_TEXTO_C_;
+    size_t  longitud_de_datos_ent   = dParams.Campo_datos_de_entrada._LONGITUD_DE_LA_LISTA_;
+    size_t* lista_de_sizes          = NULL;
+    size_t  cantidad_de_sizes       = 0;
+    Bool_t  Guardar_cantidad        = Si;
+
+
     if (dParams.Campo_datos_de_salida._LISTA_DE_SIZEs__GUARDADO_DE_INDICES_ == NULL)
         Guardar_cantidad = No;
 
@@ -190,14 +202,11 @@ Byte_t ComprobarListaDeTexto(
             return ComprobarListaDeTexto_Error_Cantidad_De_Sizes_Cero;
     }
 
-    const char* lista_de_texto_c    = dParams.Campo_datos_de_entrada._LISTA_DE_TEXTO_C_;
-    size_t  longitud_de_datos_ent   = dParams.Campo_datos_de_entrada._LONGITUD_DE_LA_LISTA_;
-    size_t* lista_de_sizes          = NULL;
-    size_t  cantidad_de_sizes       = 0;
     if (Guardar_cantidad) {
         lista_de_sizes     = dParams.Campo_datos_de_salida._LISTA_DE_SIZEs__GUARDADO_DE_INDICES_;
         cantidad_de_sizes  = dParams.Campo_datos_de_salida._CANTIDAD_DE_SIZEs_;
     }
+
     enum PASOS {
         NADA,
         TEXTO_C,
@@ -245,7 +254,7 @@ Byte_t ComprobarListaDeTexto(
 
         i++;
     }
-    if (ETAPAS == CARACTER_CERO)
+    if (ETAPAS == NADA)
         return ComprobarListaDeTexto_Error_Etapa_No_Terminada_EXCEP1;
     else if (ETAPAS == TEXTO_C)
         return ComprobarListaDeTexto_Error_Etapa_No_Terminada_EXCEP2;
