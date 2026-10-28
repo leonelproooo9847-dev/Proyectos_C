@@ -1,7 +1,7 @@
 // LIBPWIN_H
 #ifndef LIBPWIN_H
 
-    #define LIBPWIN_H 2
+    #define LIBPWIN_H "V: 1.5 | NumCab: 1"
     #include <stdint.h>
     #include "GeneralCab.h"
     #include "DefErrorWin.h"
