@@ -1,6 +1,6 @@
 // GeneralCab.h
 #ifndef GNRALCAB_H
-    #define GNRALCAB_H "V: 1.1 | NumCab: 3"
+    #define GNRALCAB_H "V: 1.2 | NumCab: 3"
     #define WINDOWS_32BIT 0x10
     #define WINDOWS_64BIT 0x20
     #define WINDOWS_GNRAL 0x40
@@ -50,7 +50,7 @@
     #define No_BIT6 (~(0b01000000))
     #define No_BIT7 (~(0b10000000))
 
-    #define CONSOLA_OUTPUT 0x0f // 00001111
+    #define CONSOLA_OUTPUT 0x03 // 00000011
     #define CONSOLA_INPUT  0x3c // 00111100
-    #define CONSOLA_ERROR  0xf0 // 11110000
+    #define CONSOLA_ERROR  0xc0 // 11000000
 #endif
