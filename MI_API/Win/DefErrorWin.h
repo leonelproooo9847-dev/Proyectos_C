@@ -1,5 +1,5 @@
 #ifndef DEF_ERROR_WIN_H
-    #define DEF_ERROR_WIN_H "V: 1.1 | NumCab: 4"
+    #define DEF_ERROR_WIN_H "V: 1.2 | NumCab: 4"
 
     // Errores definiciones
     //======================================================================
@@ -96,9 +96,14 @@
 
     // CrearProceso(...)
     //
-    #define CrearProceso_Error_Estructura_Parametros_NULL       0x01
-    #define CrearProceso_Error_Estructura_Informacion_NULL      0x02
-    #define CrearProceso_Error_Direccion_NULL                   0x03
+    #define CrearProceso_Error_Estructura_Parametros_NULL               0x01
+    #define CrearProceso_Error_Estructura_Informacion_NULL              0x02
+    #define CrearProceso_Error_Direccion_NULL                           0x03
+    #define CrearProceso_Error_CreateFileA_MANEJADOR_Invalido           0x04
+    #define CrearProceso_Error_GetStdHandle_Configurar_Herencia_stdErr  0x05
+    #define CrearProceso_Error_GetStdHandle_Configurar_Herencia_stdIn   0x06
+    #define CrearProceso_Error_GetStdHandle_Configurar_Herencia_stdOut  0x07
+    #define CrearProceso_Error_CreateProcessA                           0x08
     //
 
     //=========================================================================
