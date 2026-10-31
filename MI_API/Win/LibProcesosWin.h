@@ -1,6 +1,6 @@
 // LibProcesosWin.h
 #ifndef LIBPROCESOSWIN_H
-    #define LIBPROCESOSWIN_H "V: 1.3 | NumCab: 2"
+    #define LIBPROCESOSWIN_H "V: 1.4 | NumCab: 2"
 
     #include "DefErrorWin.h"
     #include "GeneralCab.h"
@@ -35,9 +35,9 @@
             char* _NOMBRE_DE_LA_VENTANA_;
             Bool_t PERMITIR_HERENCIA_DE_CONSOLA;
             struct {
-                Bool_t HEREDAR_CONSOLA_OUTPUT;
-                Bool_t HEREDAR_CONSOLA_ERROR;
-                Bool_t HEREDAR_CONSOLA_INPUT;
+                Bool_t HEREDAR_FLUJO_OUTPUT;
+                Bool_t HEREDAR_FLUJO_ERROR;
+                Bool_t HEREDAR_FLUJO_INPUT;
                 Byte_t FORZAR_LA_HERENCIA_EN;
             } Campo_herencias;
         } Campo_configuracion;
