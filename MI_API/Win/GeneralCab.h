@@ -1,6 +1,6 @@
 // GeneralCab.h
 #ifndef GNRALCAB_H
-    #define GNRALCAB_H "V: 1.2 | NumCab: 3"
+    #define GNRALCAB_H "V: 1.4 | NumCab: 3"
     #define WINDOWS_32BIT 0x10
     #define WINDOWS_64BIT 0x20
     #define WINDOWS_GNRAL 0x40
