@@ -50,7 +50,10 @@
     #define No_BIT6 (~(0b01000000))
     #define No_BIT7 (~(0b10000000))
 
-    #define CONSOLA_OUTPUT 0x03 // 00000011
-    #define CONSOLA_INPUT  0x3c // 00111100
-    #define CONSOLA_ERROR  0xc0 // 11000000
+    #define FLUJO_OUTPUT 0x03 // 00000011
+    #define FLUJO_INPUT  0x3c // 00111100
+    #define FLUJO_ERROR  0xc0 // 11000000
+    #define CONSOLA_OUTPUT FLUJO_OUTPUT
+    #define CONSOLA_INPUT  FLUJO_INPUT
+    #define CONSOLA_ERROR  FLUJO_ERROR
 #endif
