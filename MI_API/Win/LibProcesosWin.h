@@ -1,20 +1,18 @@
 // LibProcesosWin.h
-#ifndef LIBPROCESOSWIN_H
-    #define LIBPROCESOSWIN_H "V: 1.4 | NumCab: 2"
+#ifndef LIB_PROCESOS_WIN_H
+    #define LIB_PROCESOS_WIN_H "V: 1.4.5 | NumCab: 2"
 
     #include "DefErrorWin.h"
-    #include "GeneralCab.h"
-    #include <stdint.h>
+    #include "DefGeneral.h"
 
     #define TODAS_LAS_CONSOLAS (CONSOLA_ERROR | CONSOLA_INPUT | CONSOLA_OUTPUT)
-
 
     //====================================================================
     // estructuras y definiciones de tipos:
 
 
     typedef void* MANEJADOR;
-    typedef uint32_t U32;
+
 
     //--------------------------------------------------|
 
