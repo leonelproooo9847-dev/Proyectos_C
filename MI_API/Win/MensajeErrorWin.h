@@ -1,7 +1,7 @@
 #ifndef IMPLEM_MENSAJE_ERROR_H
     #define IMPLEM_MENSAJE_ERROR_H "V: 1.0 | NumCab: 5"
 
-    #include "GeneralCab.h"
+    #include "DefGeneral.h"
     #include "DefErrorWin.h"
 
     void ImprimirMensajeDeError(
