@@ -1,5 +1,5 @@
-#ifndef IMPLEM_MENSAJE_ERROR_H
-    #define IMPLEM_MENSAJE_ERROR_H "V: 1.0 | NumCab: 5"
+#ifndef MENSAJE_ERROR_WIN_H
+    #define MENSAJE_ERROR_WIN_H "V: 1.0.5 | NumCab: 5"
 
     #include "DefGeneral.h"
     #include "DefErrorWin.h"
