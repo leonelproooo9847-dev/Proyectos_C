@@ -1,6 +1,6 @@
 // DefTipos.h
 #ifndef TIPOS_CAB_H
-    #define TIPOS_CAB_H "V: 1.5 | NumCab: 6"
+    #define TIPOS_CAB_H "V: 1.6 | NumCab: 6"
 
     // @attention: Sin seguridad adecuada entre implementaciones.
 
@@ -30,6 +30,7 @@
 
             #ifdef __INT64_TYPE__
                 typedef __INT64_TYPE__ S64;
+                #define INT64_DIS_AVA 1
             #else
                 #warning "'__INT64_TYPE__' is not defined by compiler. This is not an error | '__INT64_TYPE__' no está definido por el compilador. Esto no es un error"
             #endif
@@ -60,6 +61,7 @@
 
             #ifdef __UINT64_TYPE__
                 typedef __UINT64_TYPE__ U64;
+                #define UINT64_DIS_AVA 1
             #else
                 #warning "'__UINT64_TYPE__' is not defined by compiler. This is not an error | '__UINT64_TYPE__' no está definido por el compilador. Esto no es un error"
             #endif
