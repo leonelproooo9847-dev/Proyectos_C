@@ -1,6 +1,7 @@
 // GeneralCab.h
-#ifndef GNRALCAB_H
-    #define GNRALCAB_H "V: 1.4 | NumCab: 3"
+#ifndef DEF_GNRAL_H 
+    #define DEF_GNRAL_H "V: 1.4 | NumCab: 3"
+
     #define WINDOWS_32BIT 0x10
     #define WINDOWS_64BIT 0x20
     #define WINDOWS_GNRAL 0x40
@@ -56,4 +57,22 @@
     #define CONSOLA_OUTPUT FLUJO_OUTPUT
     #define CONSOLA_INPUT  FLUJO_INPUT
     #define CONSOLA_ERROR  FLUJO_ERROR
+
+    #define UTILIZAR_DEF_TIPOS_H  Si // <- cambiar
+
+    #if UTILIZAR_DEF_TIPOS_H
+        #include "DefTipos.h"
+    #else
+        #include <stdint.h>
+
+        typedef int8_t   S8;
+        typedef int16_t  S16;
+        typedef int32_t  S32;
+        typedef int64_t  S64;
+
+        typedef uint8_t  U8;
+        typedef uint16_t U16;
+        typedef uint32_t U32;
+        typedef uint64_t U64;
+    #endif
 #endif
