@@ -93,14 +93,14 @@ Byte_t CrearProceso(
         herencia_de_consola 
         &&
         (
-            dParams.Campo_configuracion.Campo_herencias.HEREDAR_CONSOLA_ERROR  == Si ||
-            dParams.Campo_configuracion.Campo_herencias.HEREDAR_CONSOLA_INPUT  == Si ||
-            dParams.Campo_configuracion.Campo_herencias.HEREDAR_CONSOLA_OUTPUT == Si
+            dParams.Campo_configuracion.Campo_herencias.HEREDAR_FLUJO_ERROR  == Si ||
+            dParams.Campo_configuracion.Campo_herencias.HEREDAR_FLUJO_INPUT  == Si ||
+            dParams.Campo_configuracion.Campo_herencias.HEREDAR_FLUJO_OUTPUT == Si
         )
     ) {
         informacion_1.dwFlags |= STARTF_USESTDHANDLES;
         
-        if (dParams.Campo_configuracion.Campo_herencias.HEREDAR_CONSOLA_ERROR == Si) {
+        if (dParams.Campo_configuracion.Campo_herencias.HEREDAR_FLUJO_ERROR == Si) {
             HANDLE hError = GetStdHandle(STD_ERROR_HANDLE);
             if (hError == NULL || hError == INVALID_HANDLE_VALUE) {
                 CloseHandle(NoHeredar);
@@ -112,7 +112,7 @@ Byte_t CrearProceso(
             informacion_1.hStdError = NoHeredar;
         }
 
-        if (dParams.Campo_configuracion.Campo_herencias.HEREDAR_CONSOLA_INPUT == Si) {
+        if (dParams.Campo_configuracion.Campo_herencias.HEREDAR_FLUJO_INPUT == Si) {
             HANDLE hInput = GetStdHandle(STD_INPUT_HANDLE);
             if (hInput == NULL || hInput == INVALID_HANDLE_VALUE) {
                 CloseHandle(NoHeredar);
@@ -124,7 +124,7 @@ Byte_t CrearProceso(
             informacion_1.hStdInput = NoHeredar;
         }
 
-        if (dParams.Campo_configuracion.Campo_herencias.HEREDAR_CONSOLA_OUTPUT == Si) {
+        if (dParams.Campo_configuracion.Campo_herencias.HEREDAR_FLUJO_OUTPUT == Si) {
             HANDLE hOutput = GetStdHandle(STD_OUTPUT_HANDLE);
             if (hOutput == NULL || hOutput == INVALID_HANDLE_VALUE) {
                 CloseHandle(NoHeredar);
