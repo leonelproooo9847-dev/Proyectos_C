@@ -1,9 +1,8 @@
 // LIBPWIN_H
-#ifndef LIBPWIN_H
+#ifndef LIBP_WIN_H
+    #define LIBP_WIN_H "V: 1.5.5 | NumCab: 1"
 
-    #define LIBPWIN_H "V: 1.5 | NumCab: 1"
-    #include <stdint.h>
-    #include "GeneralCab.h"
+    #include "DefGeneral.h"
     #include "DefErrorWin.h"
 
     //=========================================================================
@@ -174,15 +173,15 @@
 
 
     Byte_t SacarDirectorioActual(
-        char*  __UBICACION_ACTUAL_DE_ESTE_ARCHIVO__entrada,
-        char*  __UBICACION_MODIFICADA__resultado,
-        size_t __LONGITUD_DEL_BUFFER_DE_RESULTADO__,
-        Bool_t __DEJAR_BARRA_INVERTIDA__
+        char*  UBICACION_ACTUAL_DE_ESTE_ARCHIVO_entrada,
+        char*  UBICACION_MODIFICADA_resultado,
+        size_t LONGITUD_DEL_BUFFER_DE_RESULTADO,
+        Bool_t DEJAR_BARRA_INVERTIDA
     );
     //=========================================================================
     Byte_t LimpiarBuffer(
-        Byte_t*     _ESTRUCTURA_,
-        size_t      _CANTIDAD_DE_BYTES_
+        Byte_t*     ESTRUCTURA,
+        size_t      CANTIDAD_DE_BYTES
     );
     //=========================================================================
     Byte_t TipoReprDeSignos();
@@ -208,8 +207,8 @@
     );
     //=========================================================================
     Byte_t CambiarCodigoDePagina(
-        Byte_t _CODIGO_DE_PAGINA_,
-        Byte_t _CONSOLA_A_CAMBIAR_
+        Byte_t CODIGO_DE_PAGINA,
+        Byte_t CONSOLA_A_CAMBIAR
     );
     //=========================================================================
     Byte_t LimpiarConsola(
@@ -217,19 +216,19 @@
     );
     //=========================================================================
     Byte_t Entrada(
-        ENTRADA_PARAMs* _CONFIGURACIONES_Y_PARAMETROS_
+        ENTRADA_PARAMs* CONFIGURACIONES_Y_PARAMETROS
     );
     //=========================================================================
     Byte_t Escribir(
-        const char*   _BUFFER_DE_TEXTO_C_,
-        size_t  _CANTIDAD_DE_BYTES_A_ESCRIBIR_,
-        Sint_t* _CANTIDAD_DE_BYTES_ESCRITOS_,
-        Byte_t  _CONSOLA_OUTPUT_O_ERROR_
+        const char*   BUFFER_DE_TEXTO_C_,
+        size_t  CANTIDAD_DE_BYTES_A_ESCRIBIR,
+        Sint_t* CANTIDAD_DE_BYTES_ESCRITOS,
+        Byte_t  CONSOLA_OUTPUT_O_ERROR
     );
     //=========================================================================
     Sint_t Imprimir(
-        const char* _TEXTO_C_,
-        void* _PUNTERO_ARGUMENTO_O_NULL_
+        const char* TEXTO_C,
+        void* PUNTERO_ARGUMENTO_O_NULL
     );
 
 
