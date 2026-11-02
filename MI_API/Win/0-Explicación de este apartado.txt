@@ -18,39 +18,75 @@ LibpWinI (Librería predeterminada en Windows Implementación):
     Empezamos por las portables:
 
         SacarDirectorioActual():
-        Sus parametro son:
-        -   UBICACION_ACTUAL_DE_ESTE_ARCHIVO_entrada de tipo char pointer
-        -   UBICACION_MODIFICADA_resultado de tipo char pointer 
-        -   LONGITUD_DEL_BUFFER_DE_RESULTADO de tipo size_t (DefGeneral.h | stddef)
-        -   DEJAR_BARRA_INVERTIDA de tipo Bool_t (DefGeneral.h)
-
-        Su objetivo es tomar los argumentos de
-        main, específicamente de argument vector (argv) y
-        sacar, mediante el índice argv[0],
-        su directorio actual, pudiendo también,
-        decidir si dejar la última barra o no.
-
-        Su retorno es de tipo Byte_t (unsigned char) y puede retornar estos valores:
-        - SacarDirectorioActual_Error_Punteros_NULLs (DefErrorWin.h)
-        - SacarDirectorioActual_Error_Longitud_Corta (DefErrorWin.h)
-
-        la función empieza comprobano ambos pointer char
-        si una de ellas es NULL, retorna SacarDirectorioActual_Error_Punteros_NULLs (0x01), luego
-        saca la longitud del argv[0] y compara si la
-        longitud de argv[0] sea igual o mayor a la longitud
-        proporcionada en el parámetro __LONGITUD_DEL_BUFFER_DE_RESULTADO__
-        si lo es, devuelve SacarDirectorioActual_Error_Longitud_Corta (0x02)
-
-        a partir de aquí, si paso las validaciones
-        correspondientes, la operacion sigue con normalidad,
-        copia argv[0] en el buffer proporcionado en el
-        parámetro __UBICACION_MODIFICADA__resultado
-        luego, desde el último índice, retrocede colocando 0x00
-        a los demás byte hasta encontrar '/' o '\\' y,
-        dependiendo de la decisión tomada en el parámetro
-        __DEJAR_BARRA_INVERTIDA__, borra la barra o lo deja.
-        el retorno será 0 (exitoso).
+            Sus parametro son:
+            -   UBICACION_ACTUAL_DE_ESTE_ARCHIVO_entrada de tipo char pointer
+            -   UBICACION_MODIFICADA_resultado de tipo char pointer 
+            -   LONGITUD_DEL_BUFFER_DE_RESULTADO de tipo size_t (DefGeneral.h | stddef)
+            -   DEJAR_BARRA_INVERTIDA de tipo Bool_t (DefGeneral.h)
+    
+            Su objetivo es tomar los argumentos de
+            main, específicamente de argument vector (argv) y
+            sacar, mediante el índice argv[0],
+            su directorio actual, pudiendo también,
+            decidir si dejar la última barra o no.
+    
+            Su retorno es de tipo Byte_t (unsigned char) y puede retornar estos valores:
+            - SacarDirectorioActual_Error_Punteros_NULLs (DefErrorWin.h)
+            - SacarDirectorioActual_Error_Longitud_Corta (DefErrorWin.h)
+            - 0 (exito)
+    
+            la función empieza comprobano ambos pointer char
+            si una de ellas es NULL, retorna SacarDirectorioActual_Error_Punteros_NULLs (0x01), luego
+            saca la longitud del argv[0] y compara si la
+            longitud de argv[0] sea igual o mayor a la longitud
+            proporcionada en el parámetro __LONGITUD_DEL_BUFFER_DE_RESULTADO__
+            si lo es, devuelve SacarDirectorioActual_Error_Longitud_Corta (0x02)
+    
+            a partir de aquí, si paso las validaciones
+            correspondientes, la operacion sigue con normalidad,
+            copia argv[0] en el buffer proporcionado en el
+            parámetro __UBICACION_MODIFICADA__resultado
+            luego, desde el último índice, retrocede colocando 0x00
+            a los demás byte hasta encontrar '/' o '\\' y,
+            dependiendo de la decisión tomada en el parámetro
+            __DEJAR_BARRA_INVERTIDA__, borra la barra o lo deja.
+            el retorno será 0 (exitoso).
 
         LimpiarBuffer():
-        Sus parámetros son:
-        -   
+            Sus parámetros son:
+            -   ESTRUCTURA de tipo pointer Byte_t (pointer unsigned char)
+            -   CANTIDAD_DE_BYTES de tipo size_t
+    
+            Su objetivo es rellenar el buffer o estructura de memoria contigua por 0x00
+            Es decir, borrando todo y reseteando los datos a 0.
+    
+            Su retorno es:
+            - GENERAL_Error_Puntero_NULL (DefErrorWin.h)
+            - 0 (exito)
+            
+            La función empieza comprobando que la dirección de memoria no sea NULL.
+            Si lo es, retorna GENERAL_Error_Puntero_NULL (0x01), de lo contrario,
+            inicializa un size_t que iterará sobre esos bytes hasta que su valor
+            sea igual que la cantidad proporcionada en el parámetro CANTIDAD_DE_BYTES.
+            Tras eso, retorna 0 (exito).
+
+        TipoReprDeSignos():
+            No recibe ningun parámetro.
+
+            Su objetivo es proporcionar el tipo de representación interna de los
+            números con signos que implementa gcc o la CPU.
+
+            Su retorno es:
+            - _SIGNO_Y_MAGNITUD_ (LibpWin.h)
+            - _COMPLEMENTO_UNO_  (LibpWin.h)
+            - _COMPLEMENTO_DOS_  (LibpWin.h)
+
+            su condición final es un else que entrega _COMPLEMENTO_DOS_, nunca
+            retorna un 0 u otro valor distinto a los de su retorno descrito.
+
+        CopiarBuffer():
+            Sus parámetros son:
+            -   BUFFER_ORIGEN  de tipo pointer void
+            -   BUFFER_DESTINO de tipo pointer void
+            -   LONGITUD_DEL_BUFFER_ORIGEN  de tipo size_t
+            -   LONGITUD_DEL_BUFFER_DESTINO de tipo size_t
