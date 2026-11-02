@@ -73,19 +73,19 @@ static void imprimirErr (
 }
 
 void ImprimirMensajeDeError(
-    void*  _PUNTERO_DE_RETORNO_O_DE_CODIGO_DE_ERROR_,
-    Byte_t _FUNCION_ESPECIFICA_DEL_ERROR_
+    void*  PUNTERO_DE_RETORNO_O_DE_CODIGO_DE_ERROR,
+    Byte_t FUNCION_ESPECIFICA_DEL_ERROR
 ) {
-    #define ptrRet  (_PUNTERO_DE_RETORNO_O_DE_CODIGO_DE_ERROR_)
-    #define ptrRetDes(TIPO_DESREFERENCIA)   (*((TIPO_DESREFERENCIA*)(_PUNTERO_DE_RETORNO_O_DE_CODIGO_DE_ERROR_)))
-    #define Especif_Funcion (_FUNCION_ESPECIFICA_DEL_ERROR_)
+    #define ptrRet  (PUNTERO_DE_RETORNO_O_DE_CODIGO_DE_ERROR)
+    #define ptrRetDes(TIPO_DESREFERENCIA)   (*((TIPO_DESREFERENCIA*)(PUNTERO_DE_RETORNO_O_DE_CODIGO_DE_ERROR)))
+    #define Especif_Funcion (FUNCION_ESPECIFICA_DEL_ERROR)
 
     escribirErr("Error : ", 8);
 
-    if (_FUNCION_ESPECIFICA_DEL_ERROR_ == 0) {
+    if (FUNCION_ESPECIFICA_DEL_ERROR == 0) {
         imprimirErr(
             "NO_ESPECIFICO : NO_DATOS : %",
-            _PUNTERO_DE_RETORNO_O_DE_CODIGO_DE_ERROR_
+            PUNTERO_DE_RETORNO_O_DE_CODIGO_DE_ERROR
         );
     } else {
         switch (Especif_Funcion) {
@@ -669,7 +669,7 @@ void ImprimirMensajeDeError(
             default:
                 imprimirErr(
                     "NO_ESPECIFICO : NO_DATOS : %",
-                    _PUNTERO_DE_RETORNO_O_DE_CODIGO_DE_ERROR_
+                    PUNTERO_DE_RETORNO_O_DE_CODIGO_DE_ERROR
                 );
             break;
         }
