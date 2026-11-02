@@ -19,10 +19,10 @@ LibpWinI (Librería predeterminada en Windows Implementación):
 
         SacarDirectorioActual():
         Sus parametro son:
-        -   __UBICACION_ACTUAL_DE_ESTE_ARCHIVO__entrada de tipo char pointer
-        -   __UBICACION_MODIFICADA__resultado de tipo char pointer 
-        -   __LONGITUD_DEL_BUFFER_DE_RESULTADO__ de tipo Size_t
-        -   __DEJAR_BARRA_INVERTIDA__ de tipo Bool_t (GeneralCab.h)
+        -   UBICACION_ACTUAL_DE_ESTE_ARCHIVO_entrada de tipo char pointer
+        -   UBICACION_MODIFICADA_resultado de tipo char pointer 
+        -   LONGITUD_DEL_BUFFER_DE_RESULTADO de tipo size_t (DefGeneral.h | stddef)
+        -   DEJAR_BARRA_INVERTIDA de tipo Bool_t (DefGeneral.h)
 
         Su objetivo es tomar los argumentos de
         main, específicamente de argument vector (argv) y
@@ -50,3 +50,7 @@ LibpWinI (Librería predeterminada en Windows Implementación):
         dependiendo de la decisión tomada en el parámetro
         __DEJAR_BARRA_INVERTIDA__, borra la barra o lo deja.
         el retorno será 0 (exitoso).
+
+        LimpiarBuffer():
+        Sus parámetros son:
+        -   
