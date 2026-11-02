@@ -1,7 +1,6 @@
 // MensajeErrorWinI.c
 
 #include "MensajeErrorWin.h"
-#include <stddef.h>
 #include <windows.h>
 
 static void escribirErr(
@@ -664,6 +663,8 @@ void ImprimirMensajeDeError(
                     break;
                 }
             break;
+
+            // TODO: HACER MENSAJES DE ERRORES DE LibProcesosWinI.c
 
             default:
                 imprimirErr(
