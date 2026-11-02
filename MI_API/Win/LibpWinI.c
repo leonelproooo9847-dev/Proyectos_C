@@ -35,48 +35,48 @@ CP_UTF8
 // código compatible tanto para Windows como Linux:
 
 Byte_t SacarDirectorioActual(
-    char*  __UBICACION_ACTUAL_DE_ESTE_ARCHIVO__entrada,
-    char*  __UBICACION_MODIFICADA__resultado,
-    size_t __LONGITUD_DEL_BUFFER_DE_RESULTADO__,
-    Bool_t __DEJAR_BARRA_INVERTIDA__
+    char*  UBICACION_ACTUAL_DE_ESTE_ARCHIVO_entrada,
+    char*  UBICACION_MODIFICADA_resultado,
+    size_t LONGITUD_DEL_BUFFER_DE_RESULTADO,
+    Bool_t DEJAR_BARRA_INVERTIDA
 ) {
     if (
-        __UBICACION_ACTUAL_DE_ESTE_ARCHIVO__entrada   == NULL ||
-        __UBICACION_MODIFICADA__resultado             == NULL
+        UBICACION_ACTUAL_DE_ESTE_ARCHIVO_entrada   == NULL ||
+        UBICACION_MODIFICADA_resultado             == NULL
     )
         return SacarDirectorioActual_Error_Punteros_NULLs;
 
-    if (__DEJAR_BARRA_INVERTIDA__ == 0)
-        __DEJAR_BARRA_INVERTIDA__ = No;
+    if (DEJAR_BARRA_INVERTIDA == 0)
+        DEJAR_BARRA_INVERTIDA = No;
     size_t i_r = 0;
 
     {
         size_t i_e = 0;
 
-        while (__UBICACION_ACTUAL_DE_ESTE_ARCHIVO__entrada[i_e] != 0x00)
+        while (UBICACION_ACTUAL_DE_ESTE_ARCHIVO_entrada[i_e] != 0x00)
             i_e++;
 
-        if (i_e >= __LONGITUD_DEL_BUFFER_DE_RESULTADO__)
+        if (i_e >= LONGITUD_DEL_BUFFER_DE_RESULTADO)
             return SacarDirectorioActual_Error_Longitud_Corta;
 
-        while (__UBICACION_ACTUAL_DE_ESTE_ARCHIVO__entrada[i_r] != 0x00) {
-            __UBICACION_MODIFICADA__resultado[i_r] = __UBICACION_ACTUAL_DE_ESTE_ARCHIVO__entrada[i_r];
+        while (UBICACION_ACTUAL_DE_ESTE_ARCHIVO_entrada[i_r] != 0x00) {
+            UBICACION_MODIFICADA_resultado[i_r] = UBICACION_ACTUAL_DE_ESTE_ARCHIVO_entrada[i_r];
             i_r++;
         }
-        __UBICACION_MODIFICADA__resultado[i_r] = 0x00;
+        UBICACION_MODIFICADA_resultado[i_r] = 0x00;
     }
 
     while (i_r != 0) {
         if (
-            __UBICACION_MODIFICADA__resultado[i_r] == '\\' ||
-            __UBICACION_MODIFICADA__resultado[i_r] == '/'
+            UBICACION_MODIFICADA_resultado[i_r] == '\\' ||
+            UBICACION_MODIFICADA_resultado[i_r] == '/'
         ) {
-            if (__DEJAR_BARRA_INVERTIDA__ == No)
-                __UBICACION_MODIFICADA__resultado[i_r] = 0x00;
+            if (DEJAR_BARRA_INVERTIDA == No)
+                UBICACION_MODIFICADA_resultado[i_r] = 0x00;
 
             break;
         } else {
-            __UBICACION_MODIFICADA__resultado[i_r] = 0x00;
+            UBICACION_MODIFICADA_resultado[i_r] = 0x00;
         }
         i_r--;
     }
@@ -90,15 +90,15 @@ Byte_t SacarDirectorioActual(
 
 
 Byte_t LimpiarBuffer(
-    Byte_t*     _ESTRUCTURA_,
-    size_t      _CANTIDAD_DE_BYTES_
+    Byte_t*     ESTRUCTURA,
+    size_t      CANTIDAD_DE_BYTES
 ) {
-    if (_ESTRUCTURA_ == NULL)
+    if (ESTRUCTURA == NULL)
         return GENERAL_Error_Puntero_NULL;
 
     size_t i = 0;
-    while (i < _CANTIDAD_DE_BYTES_) {
-        _ESTRUCTURA_[i] = 0x00;
+    while (i < CANTIDAD_DE_BYTES) {
+        ESTRUCTURA[i] = 0x00;
         i++;
     }
 
@@ -582,12 +582,12 @@ Byte_t CapturarTeclaUTF8(
 
 
 Byte_t CambiarCodigoDePagina(
-    Byte_t _CODIGO_DE_PAGINA_,
-    Byte_t _CONSOLA_A_CAMBIAR_
+    Byte_t CODIGO_DE_PAGINA,
+    Byte_t CONSOLA_A_CAMBIAR
 ) {
     UINT CodPag = 0;
 
-    switch (_CODIGO_DE_PAGINA_)
+    switch (CODIGO_DE_PAGINA)
     {
         case CodPag_ANSI_SubProceso : CodPag = CP_THREAD_ACP;   break;
         case CodPag_ANSI_Predet     : CodPag = CP_ACP;          break;
@@ -601,13 +601,13 @@ Byte_t CambiarCodigoDePagina(
             return CambiarCodigoDePagina_Error_Parametro_CodPag_Invalido;
     }
 
-    if (_CONSOLA_A_CAMBIAR_ == CONSOLA_OUTPUT) {
+    if (CONSOLA_A_CAMBIAR == CONSOLA_OUTPUT) {
         if (SetConsoleOutputCP(CodPag) == FALSE)
             return CambiarCodigoDePagina_Error_CONSOLA_OUTPUT_SetConsoleOutputCP;
-    } else if (_CONSOLA_A_CAMBIAR_ == CONSOLA_INPUT) {
+    } else if (CONSOLA_A_CAMBIAR == CONSOLA_INPUT) {
         if (SetConsoleCP(CodPag) == FALSE)
             return CambiarCodigoDePagina_Error_CONSOLA_INPUT_SetConsoleCP;
-    } else if (_CONSOLA_A_CAMBIAR_ == (CONSOLA_OUTPUT | CONSOLA_INPUT)) {
+    } else if (CONSOLA_A_CAMBIAR == (CONSOLA_OUTPUT | CONSOLA_INPUT)) {
         if (SetConsoleOutputCP(CodPag) == FALSE)
             return CambiarCodigoDePagina_Error_CONSOLA_OUTPUT_INPUT_SetConsoleOutputCP;
         if (SetConsoleCP(CodPag) == FALSE)
@@ -742,10 +742,10 @@ Byte_t LimpiarConsola(
 
 
 Byte_t Entrada(
-    ENTRADA_PARAMs* _CONFIGURACIONES_Y_PARAMETROS_
+    ENTRADA_PARAMs* CONFIGURACIONES_Y_PARAMETROS
 ) {
 
-    #define dConfParams (*_CONFIGURACIONES_Y_PARAMETROS_)
+    #define dConfParams (*CONFIGURACIONES_Y_PARAMETROS)
     #define BIT_0       0x01
     #define BIT_1       0X02
     #define BIT_2       0x04
@@ -769,7 +769,7 @@ Byte_t Entrada(
         return Entrada_Error_SetConsoleOutputCP;
     }
 
-    if (_CONFIGURACIONES_Y_PARAMETROS_ == NULL)
+    if (CONFIGURACIONES_Y_PARAMETROS == NULL)
         return GENERAL_Error_Puntero_NULL;
     ///////////////////////////
 
@@ -1126,21 +1126,21 @@ Byte_t Entrada(
 
 
 Byte_t Escribir(
-    const char*   _BUFFER_DE_TEXTO_C_,
-    size_t  _CANTIDAD_DE_BYTES_A_ESCRIBIR_,
-    Sint_t* _CANTIDAD_DE_BYTES_ESCRITOS_,
-    Byte_t  _CONSOLA_OUTPUT_O_ERROR_
+    const char*   BUFFER_DE_TEXTO_C,
+    size_t  CANTIDAD_DE_BYTES_A_ESCRIBIR,
+    Sint_t* CANTIDAD_DE_BYTES_ESCRITOS,
+    Byte_t  CONSOLA_OUTPUT_O_ERROR
 ) {
-    if (_BUFFER_DE_TEXTO_C_ == NULL)
+    if (BUFFER_DE_TEXTO_C == NULL)
         return GENERAL_Error_Puntero_NULL;
 
     Byte_t retorno = 0;
 
     DWORD escritos = 0;
     HANDLE consola;
-    if (_CONSOLA_OUTPUT_O_ERROR_ == CONSOLA_OUTPUT)
+    if (CONSOLA_OUTPUT_O_ERROR == CONSOLA_OUTPUT)
         consola = GetStdHandle(STD_OUTPUT_HANDLE);
-    else if (_CONSOLA_OUTPUT_O_ERROR_ == CONSOLA_ERROR)
+    else if (CONSOLA_OUTPUT_O_ERROR == CONSOLA_ERROR)
         consola = GetStdHandle(STD_ERROR_HANDLE);
     else
         return Escribir_Error_Param_Invalido;
@@ -1152,21 +1152,21 @@ Byte_t Escribir(
 
     retorno = (Bool_t)WriteFile(
         consola,
-        _BUFFER_DE_TEXTO_C_,
-        (DWORD)_CANTIDAD_DE_BYTES_A_ESCRIBIR_,
+        BUFFER_DE_TEXTO_C,
+        (DWORD)CANTIDAD_DE_BYTES_A_ESCRIBIR,
         &escritos,
         NULL
     );
 
     if (!retorno)
         retorno = Escribir_Error_WriteFile;
-    else if (escritos != (DWORD)_CANTIDAD_DE_BYTES_A_ESCRIBIR_)
+    else if (escritos != (DWORD)CANTIDAD_DE_BYTES_A_ESCRIBIR)
         retorno = Escribir_ErrorNOFATAL_Escritos_No_Iguales;
     else
         retorno = 0;
 
-    if (_CANTIDAD_DE_BYTES_ESCRITOS_ != NULL)
-        *_CANTIDAD_DE_BYTES_ESCRITOS_ += (Sint_t)escritos;
+    if (CANTIDAD_DE_BYTES_ESCRITOS != NULL)
+        *CANTIDAD_DE_BYTES_ESCRITOS += (Sint_t)escritos;
 
     return retorno;
 }
@@ -1177,11 +1177,11 @@ Byte_t Escribir(
 
 
 Sint_t Imprimir(
-    const char* _TEXTO_C_,
-    void* _PUNTERO_ARGUMENTO_O_NULL_
+    const char* TEXTO_C,
+    void* PUNTERO_ARGUMENTO_O_NULL
 ) {
-    #define C(iterador) _TEXTO_C_[bytes+iterador]
-    if (_TEXTO_C_ == NULL)
+    #define C(iterador) TEXTO_C[bytes+iterador]
+    if (TEXTO_C == NULL)
         return 0;
 
     Uint_t bytes = 0;
@@ -1189,10 +1189,10 @@ Sint_t Imprimir(
     Byte_t RetEscribir = 0;
 
     while (1) {
-        if (_TEXTO_C_[bytes] == 0x00) 
+        if (TEXTO_C[bytes] == 0x00) 
             break;  
         else {
-            if (_TEXTO_C_[bytes] == '%') {
+            if (TEXTO_C[bytes] == '%') {
                 Bool_t exito = Si;
 
                 goto saltear_logica_puntero_nulo;
@@ -1207,18 +1207,18 @@ Sint_t Imprimir(
 
                 saltear_logica_puntero_nulo:    
 
-                if (_TEXTO_C_[bytes+1] == 's' || _TEXTO_C_[bytes+1] == 'S') {  
-                    if (_PUNTERO_ARGUMENTO_O_NULL_ == NULL)  
+                if (TEXTO_C[bytes+1] == 's' || TEXTO_C[bytes+1] == 'S') {  
+                    if (PUNTERO_ARGUMENTO_O_NULL == NULL)  
                         goto puntero_nulo;  
 
                     Uint_t i = 0;  
-                    char* _nuevo_TEXTO_C_ = (char*)_PUNTERO_ARGUMENTO_O_NULL_;  
+                    char* _nuevoTEXTO_C = (char*)PUNTERO_ARGUMENTO_O_NULL;  
 
                     while (1) {  
-                        if (_nuevo_TEXTO_C_[i] == 0x00)  
+                        if (_nuevoTEXTO_C[i] == 0x00)  
                             break; 
                         RetEscribir = Escribir(
-                            (const char*)&(_nuevo_TEXTO_C_[i]),  
+                            (const char*)&(_nuevoTEXTO_C[i]),  
                             1,
                             (&Cantidad_escritos),
                             CONSOLA_OUTPUT
@@ -1229,11 +1229,11 @@ Sint_t Imprimir(
                         ) return -(Cantidad_escritos);
                         i++;  
                     }  
-                } else if (_TEXTO_C_[bytes+1] == 'c' || _TEXTO_C_[bytes+1] == 'C') {  
-                    if (_PUNTERO_ARGUMENTO_O_NULL_ == NULL)  
+                } else if (TEXTO_C[bytes+1] == 'c' || TEXTO_C[bytes+1] == 'C') {  
+                    if (PUNTERO_ARGUMENTO_O_NULL == NULL)  
                         goto puntero_nulo;  
 
-                    char _nuevo_caracter_ = *((char*)(_PUNTERO_ARGUMENTO_O_NULL_));  
+                    char _nuevo_caracter_ = *((char*)(PUNTERO_ARGUMENTO_O_NULL));  
 
 
                     RetEscribir = Escribir(
@@ -1246,15 +1246,15 @@ Sint_t Imprimir(
                         RetEscribir != 0 &&
                         RetEscribir != Escribir_ErrorNOFATAL_Escritos_No_Iguales
                     ) return -(Cantidad_escritos);  
-                } else if (_TEXTO_C_[bytes+1] == 'x' || _TEXTO_C_[bytes+1] == 'X') {  
-                    if (_PUNTERO_ARGUMENTO_O_NULL_ == NULL)  
+                } else if (TEXTO_C[bytes+1] == 'x' || TEXTO_C[bytes+1] == 'X') {  
+                    if (PUNTERO_ARGUMENTO_O_NULL == NULL)  
                         goto puntero_nulo;  
 
                     Bool_t minuscula = Si;  
-                    if (_TEXTO_C_[bytes+1] == 'X')  
+                    if (TEXTO_C[bytes+1] == 'X')  
                         minuscula = No;  
 
-                    Byte_t _hex_ = *((Byte_t*)(_PUNTERO_ARGUMENTO_O_NULL_));  
+                    Byte_t _hex_ = *((Byte_t*)(PUNTERO_ARGUMENTO_O_NULL));  
 
                     Byte_t  nibble_alto = _hex_ >> 4;  
                     Byte_t  nibble_bajo = _hex_ & 0x0f;  
@@ -1294,12 +1294,12 @@ Sint_t Imprimir(
                             termino = Si;  
 
                     }  
-                } else if (_TEXTO_C_[bytes+1] == 'b' || _TEXTO_C_[bytes+1] == 'B') {  
-                    if (_PUNTERO_ARGUMENTO_O_NULL_ == NULL)  
+                } else if (TEXTO_C[bytes+1] == 'b' || TEXTO_C[bytes+1] == 'B') {  
+                    if (PUNTERO_ARGUMENTO_O_NULL == NULL)  
                         goto puntero_nulo;
 
                     Byte_t mascara = 0b10000000;  
-                    Byte_t _bin_ = *((Byte_t*)(_PUNTERO_ARGUMENTO_O_NULL_));  
+                    Byte_t _bin_ = *((Byte_t*)(PUNTERO_ARGUMENTO_O_NULL));  
 
                     for (Byte_t i = 0; i < 8; i++) {  
                         if ((mascara >> i)&(_bin_)) { 
@@ -1331,7 +1331,7 @@ Sint_t Imprimir(
                     ||
                     (C(1) == 'u' && C(2) == 'i' && C(3) == 'n' && C(4) == 't')
                 ) {
-                    if (_PUNTERO_ARGUMENTO_O_NULL_ == NULL) {
+                    if (PUNTERO_ARGUMENTO_O_NULL == NULL) {
                         if (C(1) == 'i')
                             bytes+=2;
                         else
@@ -1346,7 +1346,7 @@ Sint_t Imprimir(
 
                         Bool_t es_negativo = No;
                         bytes+=2;
-                        Sint_t numero = *((Sint_t*)(_PUNTERO_ARGUMENTO_O_NULL_));
+                        Sint_t numero = *((Sint_t*)(PUNTERO_ARGUMENTO_O_NULL));
                         Uint_t numero_negativo = 0;
 
                         if (numero < 0) {
@@ -1395,7 +1395,7 @@ Sint_t Imprimir(
                         }
                     } else {
                         bytes+=3;
-                        Uint_t numero = *((Uint_t*)(_PUNTERO_ARGUMENTO_O_NULL_));
+                        Uint_t numero = *((Uint_t*)(PUNTERO_ARGUMENTO_O_NULL));
 
                         do {
                             numero_texto[i] = '0'+(numero%10);
@@ -1423,7 +1423,7 @@ Sint_t Imprimir(
                 else {  
                     no_exito:
                     RetEscribir = Escribir(
-                        (const char*)&(_TEXTO_C_[bytes]),  
+                        (const char*)&(TEXTO_C[bytes]),  
                         1,
                         (&Cantidad_escritos),
                         CONSOLA_OUTPUT
@@ -1444,7 +1444,7 @@ Sint_t Imprimir(
                 continue;  
             } else {  
                 RetEscribir = Escribir(
-                    (const char*)&(_TEXTO_C_[bytes]),  
+                    (const char*)&(TEXTO_C[bytes]),  
                     1,
                     (&Cantidad_escritos),
                     CONSOLA_OUTPUT
