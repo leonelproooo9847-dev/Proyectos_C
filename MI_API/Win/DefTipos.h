@@ -2,7 +2,6 @@
 #ifndef TIPOS_CAB_H
     #define TIPOS_CAB_H "V: 2.0.5 | NumCab: 6"
 
-    #define ESTA_DISPONIBLE_64BIT
     #define SOLO_64BIT_SIN_SIGNO 2
     #define SOLO_64BIT_CON_SIGNO 3
     // @attention: Esta cabecera no- \
@@ -11,6 +10,9 @@
     -                                \
     |  @date: Esta cabecera solo     \
     |  será en español.              \
+    -                                \
+    |  pd: Me cuesta hacerlo en el   \
+    |  celular :P                    \
     \\                               \ 
 
     #if defined(__GNUC__) || defined(__clang__)
@@ -84,15 +86,14 @@
             //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
         
             #if defined(__INT64_TYPE__) && defined(__UINT64_TYPE__)
-                #define IS_64BIT_AVAILABLE_question 1
+                #define ESTA_DISPONIBLE_64BIT 1
             #elif defined(__INT64_TYPE__) && !(defined(__UINT64_TYPE__))
-                #define IS_64BIT_AVAILABLE_question ONLY_SIGNED_64BIT
+                #define ESTA_DISPONIBLE_64BIT SOLO_64BIT_CON_SIGNO
             #elif !(defined(__INT64_TYPE__)) && defined(__UINT64_TYPE__)
-                #define IS_64BIT_AVAILABLE_question ONLY_UNSIGNED_64BIT
+                #define ESTA_DISPONIBLE_64BIT SOLO_64BIT_SIN_SIGNO
             #else
-                #define IS_64BIT_AVAILABLE_question 0
+                #define ESTA_DISPONIBLE_64BIT 0
             #endif
-            #define ESTA_DISPONIBLE_64BIT_pregunta IS_64BIT_AVAILABLE_question
         #else
             #error "'__CHAR_BIT__' no es de 8 bit"
         #endif
