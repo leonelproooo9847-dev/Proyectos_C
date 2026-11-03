@@ -8,7 +8,7 @@
     |  garantiza seguridad y consis- \
     |  tencia entre implementaciones.\
     -                                \
-    |  @date: Esta cabecera solo     \
+    |  @note: Esta cabecera solo     \
     |  será en español.              \
     -                                \
     |  pd: Me cuesta hacerlo en el   \
