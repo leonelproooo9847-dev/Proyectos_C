@@ -77,7 +77,6 @@
 
             #ifdef __UINT64_TYPE__
                 typedef __UINT64_TYPE__ U64;
-                #define UINT64_DIS_AVA 1
             #else
                 #warning "'__UINT64_TYPE__' no está definido por el compilador. Esto no es un error"
             #endif
