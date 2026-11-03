@@ -80,11 +80,11 @@
             //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
             //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
         
-            #if defined(__INT64_TYPE__) && defined(__UINT8_TYPE__)
+            #if defined(__INT64_TYPE__) && defined(__UINT64_TYPE__)
                 #define IS_64BIT_AVAILABLE_question 1
-            #elif defined(__INT64_TYPE__) && !(defined(__UINT8_TYPE__))
+            #elif defined(__INT64_TYPE__) && !(defined(__UINT64_TYPE__))
                 #define IS_64BIT_AVAILABLE_question ONLY_SIGNED_64BIT
-            #elif !(defined(__INT64_TYPE__)) && defined(__UINT8_TYPE__)
+            #elif !(defined(__INT64_TYPE__)) && defined(__UINT64_TYPE__)
                 #define IS_64BIT_AVAILABLE_question ONLY_UNSIGNED_64BIT
             #else
                 #define IS_64BIT_AVAILABLE_question 0
