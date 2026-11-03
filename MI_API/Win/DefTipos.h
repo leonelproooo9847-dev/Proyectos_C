@@ -4,16 +4,16 @@
 
     #define SOLO_64BIT_SIN_SIGNO 2
     #define SOLO_64BIT_CON_SIGNO 3
-    // @attention: Esta cabecera no- \
-    |  garantiza seguridad y consis- \
-    |  tencia entre implementaciones.\
-    -                                \
-    |  @note: Esta cabecera solo     \
-    |  será en español.              \
-    -                                \
-    |  pd: Me cuesta hacerlo en el   \
-    |  celular :P                    \
-    \\                               \ 
+    /* @attention: Esta cabecera no- *\
+    |  garantiza seguridad y consis-  |
+    |  tencia entre implementaciones. |
+    |                                 |
+    |  @note: Esta cabecera solo      |
+    |  será en español.               |
+    |                                 |
+    |  pd: Me cuesta hacerlo en el    |
+    |  celular :P                     |
+    \*                               */ 
 
     #if defined(__GNUC__) || defined(__clang__)
 
