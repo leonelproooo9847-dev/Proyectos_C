@@ -59,7 +59,7 @@ static void imprimirErr (
 
                 while (i_ < 11) {
                     i_++;
-                    escribirErr((const char*)&(num_txt[i]), 1);
+                    escribirErr((const char*)&(num_txt[i_]), 1);
                 }
             }
         } else {
