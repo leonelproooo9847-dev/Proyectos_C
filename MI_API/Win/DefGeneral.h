@@ -1,4 +1,4 @@
-// GeneralCab.h
+// DefGeneral.h
 #ifndef DEF_GNRAL_H 
     #define DEF_GNRAL_H "V: 1.4 | NumCab: 3"
 
